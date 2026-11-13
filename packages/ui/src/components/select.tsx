@@ -1,0 +1,353 @@
+"use client"
+
+import * as React from "react"
+import {
+  Select as SelectPrimitive,
+  SelectContent as SelectContentPrimitive,
+  SelectGroup as SelectGroupPrimitive,
+  SelectGroupLabel as SelectGroupLabelPrimitive,
+  SelectItem as SelectItemPrimitive,
+  SelectItemIndicator as SelectItemIndicatorPrimitive,
+  SelectItemText as SelectItemTextPrimitive,
+  SelectSeparator as SelectSeparatorPrimitive,
+  SelectTrigger as SelectTriggerPrimitive,
+  SelectValue as SelectValuePrimitive,
+  SelectClear as SelectClearPrimitive,
+  SelectEmpty as SelectEmptyPrimitive,
+  SelectInput as SelectInputPrimitive,
+  SelectItemIcon as SelectItemIconPrimitive,
+  SelectList as SelectListPrimitive,
+  SelectSelectAll as SelectSelectAllPrimitive,
+  SelectStatus as SelectStatusPrimitive,
+} from "@ui-sdk/react/select"
+import { cn } from "cn"
+import { CheckIcon, ChevronDownIcon, SearchIcon, XIcon } from "lucide-react"
+
+import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { ListData, SelectProps } from "@ui-sdk/react/select"
+
+// With `items`, ui-sdk only recognizes a SelectContent that is the select's own child, so ours is swapped for the primitive here.
+function Select<T = string, Multiple extends boolean | undefined = false>(
+  props: SelectProps<T, Multiple>,
+) {
+  return (
+    <SelectPrimitive<T, Multiple> {...props}>
+      {React.Children.map(props.children, (child) =>
+        React.isValidElement<
+          Omit<React.ComponentProps<typeof SelectContentPrimitive>, "className"> & {
+            className?: string
+          }
+        >(child) && child.type === SelectContent ? (
+          <SelectContentPrimitive key={child.key} {...selectContentProps(child.props)} />
+        ) : (
+          child
+        ),
+      )}
+    </SelectPrimitive>
+  )
+}
+
+function SelectGroup({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectGroupPrimitive>, "className"> & { className?: string }) {
+  return <SelectGroupPrimitive className={cn("scroll-my-1.5 p-1", className)} {...props} />
+}
+
+// oxlint-disable-next-line typescript/no-unnecessary-type-parameters -- the primitive types the value as unknown; this lets callers name it
+function SelectValue<Value = unknown>({
+  className,
+  children,
+  ...props
+}: Omit<
+  Omit<React.ComponentProps<typeof SelectValuePrimitive>, "className"> & { className?: string },
+  "children"
+> & {
+  children?: React.ReactNode | ((value: Value) => React.ReactNode)
+}) {
+  return (
+    <SelectValuePrimitive className={cn("flex flex-1 text-left", className)} {...props}>
+      {typeof children === "function" ? (state) => children(state.value as Value) : children}
+    </SelectValuePrimitive>
+  )
+}
+
+function SelectTrigger({
+  className,
+  size = "default",
+  children,
+  ...props
+}: WithNodeChildren<
+  Omit<React.ComponentProps<typeof SelectTriggerPrimitive>, "className"> & { className?: string }
+> & {
+  children?: React.ReactNode
+  size?: "sm" | "default"
+}) {
+  return (
+    <SelectTriggerPrimitive
+      data-size={size}
+      className={cn(
+        "flex w-fit items-center justify-between gap-1.5 rounded-2xl border border-transparent bg-input/50 px-3 py-2 text-sm whitespace-nowrap transition-[color,box-shadow] duration-200 outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 disabled:cursor-not-allowed disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 data-placeholder:text-muted-foreground data-[size=default]:h-8 data-[size=sm]:h-7 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-1.5 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+        className,
+      )}
+      {...props}
+    >
+      {children}
+      <ChevronDownIcon
+        aria-hidden="true"
+        className="pointer-events-none size-4 text-muted-foreground"
+      />
+    </SelectTriggerPrimitive>
+  )
+}
+
+function selectContentProps({
+  className,
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+  alignItemWithTrigger = true,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectContentPrimitive>, "className"> & {
+  className?: string
+}) {
+  return {
+    "data-align-trigger": alignItemWithTrigger,
+    side,
+    sideOffset,
+    align,
+    alignOffset,
+    alignItemWithTrigger,
+    className: cn(
+      "max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/5 transition-[opacity,scale,translate] duration-100 data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 data-[align-trigger=true]:transition-none data-[side=bottom]:data-starting-style:-translate-y-2 data-[side=end]:data-starting-style:-translate-x-2 data-[side=left]:data-starting-style:translate-x-2 data-[side=right]:data-starting-style:-translate-x-2 data-[side=start]:data-starting-style:translate-x-2 data-[side=top]:data-starting-style:translate-y-2 motion-reduce:transition-none rtl:data-[side=end]:data-starting-style:translate-x-2 rtl:data-[side=start]:data-starting-style:-translate-x-2 dark:ring-foreground/10",
+      className,
+    ),
+    ...props,
+  }
+}
+
+function SelectContent(
+  props: Omit<React.ComponentProps<typeof SelectContentPrimitive>, "className"> & {
+    className?: string
+  },
+) {
+  return <SelectContentPrimitive {...selectContentProps(props)} />
+}
+
+function SelectLabel({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectGroupLabelPrimitive>, "className"> & {
+  className?: string
+}) {
+  return (
+    <SelectGroupLabelPrimitive
+      className={cn("px-2 py-1 text-xs text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectItem({
+  className,
+  children,
+  ...props
+}: WithNodeChildren<
+  Omit<React.ComponentProps<typeof SelectItemPrimitive>, "className"> & { className?: string }
+>) {
+  return (
+    <SelectItemPrimitive
+      className={cn(
+        "relative flex min-h-7 w-full cursor-default items-center gap-2 rounded-xl py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        className,
+      )}
+      {...props}
+    >
+      <SelectItemTextPrimitive className="flex flex-1 shrink-0 gap-2 whitespace-nowrap">
+        {children}
+      </SelectItemTextPrimitive>
+      <SelectItemIndicatorPrimitive className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
+        <CheckIcon className="pointer-events-none" />
+      </SelectItemIndicatorPrimitive>
+    </SelectItemPrimitive>
+  )
+}
+
+function SelectSeparator({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectSeparatorPrimitive>, "className"> & {
+  className?: string
+}) {
+  return (
+    <SelectSeparatorPrimitive
+      className={cn("pointer-events-none -mx-1 my-1 h-px bg-border", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectInput({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectInputPrimitive>, "className"> & { className?: string }) {
+  return (
+    <div
+      data-slot="select-input-wrapper"
+      className="sticky top-0 z-10 flex items-center gap-2 border-b bg-popover px-2.5 text-muted-foreground"
+    >
+      <SearchIcon aria-hidden="true" className="size-4 shrink-0 opacity-60" />
+      <SelectInputPrimitive
+        className={cn(
+          "h-9 w-full min-w-0 bg-transparent text-sm text-foreground outline-hidden placeholder:text-muted-foreground disabled:opacity-50",
+          className,
+        )}
+        {...props}
+      />
+    </div>
+  )
+}
+
+function SelectList({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectListPrimitive>, "className"> & { className?: string }) {
+  return (
+    <SelectListPrimitive
+      className={cn("scroll-py-1 p-1 outline-none aria-busy:opacity-60", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectEmpty({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectEmptyPrimitive>, "className"> & { className?: string }) {
+  return (
+    <SelectEmptyPrimitive
+      className={cn("py-6 text-center text-sm text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectStatus({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectStatusPrimitive>, "className"> & { className?: string }) {
+  return (
+    <SelectStatusPrimitive
+      className={cn("px-2 py-1.5 text-xs text-muted-foreground empty:hidden", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectClear({
+  className,
+  children,
+  ...props
+}: WithNodeChildren<
+  Omit<React.ComponentProps<typeof SelectClearPrimitive>, "className"> & { className?: string }
+>) {
+  return (
+    <SelectClearPrimitive
+      aria-label="Clear"
+      className={cn(
+        "inline-flex size-6 shrink-0 items-center justify-center rounded-xl text-muted-foreground outline-none hover:bg-muted hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/30 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg:not([class*='size-'])]:size-3.5",
+        className,
+      )}
+      {...props}
+    >
+      {children ?? <XIcon />}
+    </SelectClearPrimitive>
+  )
+}
+
+function SelectSelectAll({
+  className,
+  children,
+  ...props
+}: WithNodeChildren<
+  Omit<React.ComponentProps<typeof SelectSelectAllPrimitive>, "className"> & { className?: string }
+>) {
+  return (
+    <SelectSelectAllPrimitive
+      className={cn(
+        "group/select-all relative flex min-h-7 w-full cursor-default items-center gap-2 rounded-xl py-1.5 pr-8 pl-2 text-sm font-medium outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        className,
+      )}
+      {...props}
+    >
+      {children ?? "Select all"}
+      <CheckIcon
+        aria-hidden="true"
+        className="pointer-events-none absolute right-2 size-4 group-data-unchecked/select-all:hidden"
+      />
+    </SelectSelectAllPrimitive>
+  )
+}
+
+function SelectItemIcon({
+  className,
+  ...props
+}: Omit<React.ComponentProps<typeof SelectItemIconPrimitive>, "className"> & {
+  className?: string
+}) {
+  return (
+    <SelectItemIconPrimitive
+      className={cn("flex size-4 shrink-0 text-muted-foreground", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectItems({ items }: { items: ListData<unknown> }) {
+  return items.map((item, index) => {
+    if (typeof item === "string") {
+      return (
+        <SelectItem key={item} value={item}>
+          {item}
+        </SelectItem>
+      )
+    }
+    if ("type" in item && item.type === "separator")
+      return <SelectSeparator key={`separator-${index}`} />
+    if ("type" in item && item.type === "group") {
+      return (
+        <SelectGroup key={`group-${index}`}>
+          {item.label ? <SelectLabel>{item.label}</SelectLabel> : null}
+          <SelectItems items={item.items} />
+        </SelectGroup>
+      )
+    }
+    return (
+      <SelectItem key={index} value={item.value} disabled={item.disabled} label={item.label}>
+        {item.label}
+      </SelectItem>
+    )
+  })
+}
+
+export {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+  SelectClear,
+  SelectEmpty,
+  SelectInput,
+  SelectItemIcon,
+  SelectItems,
+  SelectList,
+  SelectSelectAll,
+  SelectStatus,
+}
+export { SelectValueIcon, createSelectController } from "@ui-sdk/react/select"
+export type { ListData as SelectData } from "@ui-sdk/react/select"

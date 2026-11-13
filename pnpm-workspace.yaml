@@ -1,0 +1,13 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+allowBuilds:
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+  msw: false
+
+minimumReleaseAgeExclude:
+  - "@ui-sdk/core@0.1.0-beta.1"
+  - "@ui-sdk/react@0.1.0-beta.1"

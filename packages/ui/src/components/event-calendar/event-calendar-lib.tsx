@@ -1,0 +1,549 @@
+import { expandRecurrence } from "@ui-sdk-ds/ui/components/event-calendar/event-calendar-recurrence"
+import type {
+  CalendarEvent,
+  CalendarView,
+  EventCalendarDateRange,
+  EventCalendarOccurrence,
+  EventCalendarOffDaysConfig,
+  EventCalendarResource,
+  EventCalendarSegment,
+} from "@ui-sdk-ds/ui/components/event-calendar/event-calendar-types"
+import { TZDate } from "@date-fns/tz"
+import {
+  addDays,
+  addMonths,
+  addWeeks,
+  differenceInCalendarDays,
+  differenceInMinutes,
+  format,
+  startOfDay,
+  startOfMonth,
+  startOfWeek,
+} from "date-fns"
+
+type WeekStartsOn = 0 | 1 | 2 | 3 | 4 | 5 | 6
+
+const MIN_PACK_SLOT = 30
+
+function toZoned(date: Date, timeZone: string): TZDate {
+  return new TZDate(date.getTime(), timeZone)
+}
+
+function zonedStartOfDay(date: Date, timeZone: string): TZDate {
+  return startOfDay(toZoned(date, timeZone))
+}
+
+function getDayKey(date: Date, timeZone: string): string {
+  return format(toZoned(date, timeZone), "yyyy-MM-dd")
+}
+
+function getDayTotalMinutes(dayStart: Date, timeZone: string): number {
+  const next = zonedStartOfDay(addDays(toZoned(dayStart, timeZone), 1), timeZone)
+  return differenceInMinutes(next, dayStart)
+}
+
+function snapMinutes(minutes: number, snap: number): number {
+  return Math.round(minutes / snap) * snap
+}
+
+interface ViewRangeOptions {
+  timeZone: string
+  weekStartsOn: WeekStartsOn
+  dayCount: number
+  agendaDayCount: number
+  fixedWeeks: boolean
+}
+
+interface ViewDateRanges {
+  visibleRange: EventCalendarDateRange
+  activeRange: EventCalendarDateRange
+}
+
+function getViewDateRange(view: CalendarView, date: Date, opts: ViewRangeOptions): ViewDateRanges {
+  const { timeZone, weekStartsOn, dayCount, agendaDayCount, fixedWeeks } = opts
+  const zoned = toZoned(date, timeZone)
+
+  if (view === "month") {
+    const activeStart = startOfMonth(zoned)
+    const activeEnd = startOfMonth(addMonths(zoned, 1))
+    const visibleStart = startOfWeek(activeStart, { weekStartsOn })
+    let visibleEnd: Date
+    if (fixedWeeks) {
+      visibleEnd = addDays(visibleStart, 42)
+    } else {
+      visibleEnd = startOfWeek(addDays(activeEnd, -1), { weekStartsOn })
+      visibleEnd = addWeeks(visibleEnd, 1)
+    }
+    return {
+      activeRange: { start: activeStart, end: activeEnd },
+      visibleRange: { start: visibleStart, end: visibleEnd },
+    }
+  }
+
+  if (view === "week") {
+    const start = startOfWeek(zoned, { weekStartsOn })
+    const range = { start, end: addWeeks(start, 1) }
+    return { activeRange: range, visibleRange: range }
+  }
+
+  if (view === "day" || view === "resource") {
+    const start = startOfDay(zoned)
+    const range = { start, end: addDays(start, 1) }
+    return { activeRange: range, visibleRange: range }
+  }
+
+  if (view === "days") {
+    const start = startOfDay(zoned)
+    const range = { start, end: addDays(start, Math.max(1, dayCount)) }
+    return { activeRange: range, visibleRange: range }
+  }
+
+  const start = startOfDay(zoned)
+  const range = { start, end: addDays(start, Math.max(1, agendaDayCount)) }
+  return { activeRange: range, visibleRange: range }
+}
+
+function lastDayOfZonedMonth(date: Date): number {
+  return addDays(startOfMonth(addMonths(date, 1)), -1).getDate()
+}
+
+function stepDate(
+  view: CalendarView,
+  date: Date,
+  direction: 1 | -1,
+  opts: Pick<ViewRangeOptions, "timeZone" | "dayCount" | "agendaDayCount">,
+): Date {
+  const zoned = toZoned(date, opts.timeZone)
+  if (view === "month") {
+    const stepped = addMonths(zoned, direction)
+    if (zoned.getDate() !== lastDayOfZonedMonth(zoned)) return stepped
+    return addDays(stepped, lastDayOfZonedMonth(stepped) - stepped.getDate())
+  }
+  if (view === "week") return addWeeks(zoned, direction)
+  if (view === "day" || view === "resource") return addDays(zoned, direction)
+  if (view === "days") return addDays(zoned, direction * Math.max(1, opts.dayCount))
+  return addDays(zoned, direction * Math.max(1, opts.agendaDayCount))
+}
+
+function rangesIntersect(a: EventCalendarDateRange, b: EventCalendarDateRange): boolean {
+  return a.start < b.end && a.end > b.start
+}
+
+function eventsOverlap(a: { start: Date; end: Date }, b: { start: Date; end: Date }): boolean {
+  return a.start < b.end && a.end > b.start
+}
+
+function segmentOccurrence<TData>(
+  occurrence: EventCalendarOccurrence<TData>,
+  range: EventCalendarDateRange,
+  timeZone: string,
+): Array<EventCalendarSegment<TData>> {
+  const occStart = occurrence.start
+  const occEnd = occurrence.end
+  const isZeroLength = occEnd.getTime() === occStart.getTime()
+
+  const clampStart = occStart > range.start ? occStart : range.start
+  const clampEnd = occEnd < range.end ? occEnd : range.end
+  if (clampEnd < clampStart) return []
+  if (clampEnd.getTime() === clampStart.getTime() && !isZeroLength) return []
+
+  const segments: Array<EventCalendarSegment<TData>> = []
+  let cursor = zonedStartOfDay(clampStart, timeZone)
+
+  do {
+    const next = zonedStartOfDay(addDays(toZoned(cursor, timeZone), 1), timeZone)
+    const segStart = clampStart > cursor ? clampStart : cursor
+    const segEnd = clampEnd < next ? clampEnd : next
+
+    const emptySeg = segEnd.getTime() <= segStart.getTime()
+    if (!emptySeg || isZeroLength) {
+      const isStart = segStart.getTime() === occStart.getTime()
+      const isEnd = segEnd.getTime() === occEnd.getTime()
+      segments.push({
+        occurrence,
+        day: cursor,
+        isStart,
+        isEnd,
+        continuesBefore: !isStart,
+        continuesAfter: !isEnd,
+        startMin: occurrence.allDay ? undefined : differenceInMinutes(segStart, cursor),
+        endMin: occurrence.allDay
+          ? undefined
+          : Math.max(differenceInMinutes(segEnd, cursor), differenceInMinutes(segStart, cursor)),
+      })
+    }
+    if (isZeroLength) break
+    cursor = next
+  } while (cursor < clampEnd)
+
+  return segments
+}
+
+function isBarOccurrence(occurrence: EventCalendarOccurrence, timeZone?: string): boolean {
+  return occurrence.allDay || spansMultipleDays(occurrence, timeZone)
+}
+
+function spansMultipleDays(occ: { start: Date; end: Date }, timeZone?: string): boolean {
+  const dayStart = startOfDay(timeZone ? toZoned(occ.start, timeZone) : occ.start)
+  const nextDayStart = startOfDay(addDays(dayStart, 1))
+  return occ.end.getTime() - occ.start.getTime() > nextDayStart.getTime() - dayStart.getTime()
+}
+
+function packTimedSegments<TData>(segments: Array<EventCalendarSegment<TData>>): void {
+  if (segments.length === 0) return
+
+  type Working = {
+    seg: EventCalendarSegment<TData>
+    startMin: number
+    effEnd: number
+  }
+
+  const items: Array<Working> = segments
+    .map((seg) => {
+      const startMin = seg.startMin ?? 0
+      const endMin = seg.endMin ?? startMin
+      return {
+        seg,
+        startMin,
+        effEnd: Math.max(endMin, startMin + MIN_PACK_SLOT),
+      }
+    })
+    .sort(
+      (a, b) =>
+        a.startMin - b.startMin ||
+        b.effEnd - b.startMin - (a.effEnd - a.startMin) ||
+        a.seg.occurrence.key.localeCompare(b.seg.occurrence.key),
+    )
+
+  const clusters: Array<Array<Working>> = []
+  let current: Array<Working> = []
+  let clusterEnd = -Infinity
+  for (const item of items) {
+    if (item.startMin >= clusterEnd) {
+      current = []
+      clusters.push(current)
+      clusterEnd = -Infinity
+    }
+    current.push(item)
+    clusterEnd = Math.max(clusterEnd, item.effEnd)
+  }
+
+  for (const cluster of clusters) {
+    const colEnds: Array<number> = []
+    const byColumn = new Map<number, Array<Working>>()
+    for (const item of cluster) {
+      let col = colEnds.findIndex((end) => end <= item.startMin)
+      if (col === -1) {
+        col = colEnds.length
+        colEnds.push(0)
+      }
+      colEnds[col] = item.effEnd
+      item.seg.column = col
+      const bucket = byColumn.get(col) ?? []
+      bucket.push(item)
+      byColumn.set(col, bucket)
+    }
+    const columnCount = colEnds.length
+
+    for (const item of cluster) {
+      let span = 1
+      const col = item.seg.column ?? 0
+      while (col + span < columnCount) {
+        const occupants = byColumn.get(col + span) ?? []
+        const blocked = occupants.some((o) => o.startMin < item.effEnd && o.effEnd > item.startMin)
+        if (blocked) break
+        span++
+      }
+      item.seg.columnCount = columnCount
+      item.seg.columnSpan = span
+    }
+  }
+}
+
+function packWeekRowLanes<TData>(
+  segments: Array<EventCalendarSegment<TData>>,
+  rowIndex: number,
+  rowStart: Date,
+  timeZone: string,
+): Array<EventCalendarSegment<TData>> {
+  type Bar = {
+    seg: EventCalendarSegment<TData>
+    colStart: number
+    colSpan: number
+    isStart: boolean
+    isEnd: boolean
+    lane: number
+  }
+
+  const bars: Array<Bar> = segments.map((seg) => {
+    const dayIndex = Math.round(
+      (zonedStartOfDay(seg.day, timeZone).getTime() -
+        zonedStartOfDay(rowStart, timeZone).getTime()) /
+        (24 * 60 * 60 * 1000),
+    )
+    return {
+      seg,
+      colStart: Math.max(0, Math.min(6, dayIndex)),
+      colSpan: 1,
+      isStart: seg.isStart,
+      isEnd: seg.isEnd,
+      lane: 0,
+    }
+  })
+
+  const merged = new Map<string, Bar>()
+  for (const bar of bars) {
+    const key = bar.seg.occurrence.key
+    const existing = merged.get(key)
+    if (existing) {
+      const start = Math.min(existing.colStart, bar.colStart)
+      const end = Math.max(existing.colStart + existing.colSpan, bar.colStart + bar.colSpan)
+      existing.colStart = start
+      existing.colSpan = end - start
+      existing.isStart = existing.isStart || bar.isStart
+      existing.isEnd = existing.isEnd || bar.isEnd
+    } else {
+      merged.set(key, bar)
+    }
+  }
+
+  const rowBars = Array.from(merged.values()).sort(
+    (a, b) =>
+      a.colStart - b.colStart ||
+      b.colSpan - a.colSpan ||
+      a.seg.occurrence.key.localeCompare(b.seg.occurrence.key),
+  )
+
+  const lanes: Array<Array<boolean>> = []
+  for (const bar of rowBars) {
+    let lane = 0
+    for (;;) {
+      const row = (lanes[lane] ??= Array.from({ length: 7 }, () => false))
+      let free = true
+      for (let c = bar.colStart; c < bar.colStart + bar.colSpan; c++) {
+        if (row[c]) {
+          free = false
+          break
+        }
+      }
+      if (free) break
+      lane++
+    }
+    for (let c = bar.colStart; c < bar.colStart + bar.colSpan; c++) {
+      lanes[lane]![c] = true
+    }
+    bar.lane = lane
+  }
+
+  return rowBars.map((bar) => ({
+    ...bar.seg,
+    isStart: bar.isStart,
+    isEnd: bar.isEnd,
+    continuesBefore: !bar.isStart,
+    continuesAfter: !bar.isEnd,
+    lane: bar.lane,
+    rowIndex,
+    colStart: bar.colStart,
+    colSpan: bar.colSpan,
+  }))
+}
+
+interface EventCalendarDayBucket<TData = unknown> {
+  allDay: Array<EventCalendarSegment<TData>>
+  timed: Array<EventCalendarSegment<TData>>
+}
+
+interface EventCalendarWeekRow<TData = unknown> {
+  rowIndex: number
+  rowStart: Date
+  bars: Array<EventCalendarSegment<TData>>
+}
+
+interface EventCalendarIndex<TData = unknown> {
+  occurrences: Array<EventCalendarOccurrence<TData>>
+  byDay: Map<string, EventCalendarDayBucket<TData>>
+  weekRows: Array<EventCalendarWeekRow<TData>>
+}
+
+interface BuildIndexOptions<TData> {
+  timeZone: string
+  weekStartsOn: WeekStartsOn
+  eventOrder?: (a: EventCalendarOccurrence<TData>, b: EventCalendarOccurrence<TData>) => number
+  getOccurrences?: (
+    event: CalendarEvent<TData>,
+    range: EventCalendarDateRange,
+    ctx: { timeZone: string },
+  ) => Array<{ start: Date; end: Date }> | null
+}
+
+function defaultEventOrder(a: EventCalendarOccurrence, b: EventCalendarOccurrence): number {
+  return (
+    a.start.getTime() - b.start.getTime() ||
+    b.end.getTime() - b.start.getTime() - (a.end.getTime() - a.start.getTime()) ||
+    a.key.localeCompare(b.key)
+  )
+}
+
+function buildEventIndex<TData>(
+  events: Array<CalendarEvent<TData>>,
+  visibleRange: EventCalendarDateRange,
+  opts: BuildIndexOptions<TData>,
+): EventCalendarIndex<TData> {
+  const { timeZone, weekStartsOn } = opts
+  const order = opts.eventOrder ?? defaultEventOrder
+
+  const overrideTimes = new Map<string, Set<number>>()
+  for (const event of events) {
+    if (!event.recurringEventId || !event.originalStart) continue
+    let times = overrideTimes.get(event.recurringEventId)
+    if (!times) overrideTimes.set(event.recurringEventId, (times = new Set()))
+    times.add(event.originalStart.getTime())
+  }
+
+  const occurrences: Array<EventCalendarOccurrence<TData>> = []
+  for (const event of events) {
+    const replaced = overrideTimes.get(event.id)
+    const custom = opts.getOccurrences?.(event, visibleRange, { timeZone })
+    if (custom) {
+      custom.forEach((occ, i) => {
+        if (replaced?.has(occ.start.getTime())) return
+        if (!rangesIntersect({ start: occ.start, end: occ.end }, visibleRange)) return
+        occurrences.push({
+          key: `${event.id}::${occ.start.toISOString()}`,
+          eventId: event.id,
+          event,
+          start: occ.start,
+          end: occ.end,
+          allDay: event.allDay ?? false,
+          isRecurring: true,
+          recurrenceIndex: i,
+        })
+      })
+      continue
+    }
+    const expanded = expandRecurrence(event, visibleRange, { timeZone })
+    occurrences.push(
+      ...(replaced ? expanded.filter((occ) => !replaced.has(occ.start.getTime())) : expanded),
+    )
+  }
+  occurrences.sort(order)
+
+  const byDay = new Map<string, EventCalendarDayBucket<TData>>()
+  const barSegmentsByRow = new Map<number, Array<EventCalendarSegment<TData>>>()
+  const firstRowStart = startOfWeek(toZoned(visibleRange.start, timeZone), {
+    weekStartsOn,
+  })
+
+  for (const occurrence of occurrences) {
+    const segments = segmentOccurrence(occurrence, visibleRange, timeZone)
+    const bar = isBarOccurrence(occurrence, timeZone)
+    for (const seg of segments) {
+      const key = getDayKey(seg.day, timeZone)
+      let bucket = byDay.get(key)
+      if (!bucket) {
+        bucket = { allDay: [], timed: [] }
+        byDay.set(key, bucket)
+      }
+      if (bar) {
+        bucket.allDay.push(seg)
+        const rowIndex = Math.floor(
+          differenceInCalendarDays(toZoned(seg.day, timeZone), firstRowStart) / 7,
+        )
+        const rowBucket = barSegmentsByRow.get(rowIndex) ?? []
+        rowBucket.push(seg)
+        barSegmentsByRow.set(rowIndex, rowBucket)
+      } else {
+        bucket.timed.push(seg)
+      }
+    }
+  }
+
+  for (const bucket of byDay.values()) {
+    packTimedSegments(bucket.timed)
+  }
+
+  const weekRows: Array<EventCalendarWeekRow<TData>> = []
+  for (const [rowIndex, segs] of barSegmentsByRow) {
+    const rowStart = addWeeks(firstRowStart, rowIndex)
+    weekRows.push({
+      rowIndex,
+      rowStart,
+      bars: packWeekRowLanes(segs, rowIndex, rowStart, timeZone),
+    })
+  }
+  weekRows.sort((a, b) => a.rowIndex - b.rowIndex)
+
+  return { occurrences, byDay, weekRows }
+}
+
+function getRangeKey(range: EventCalendarDateRange): string {
+  return `${range.start.getTime()}-${range.end.getTime()}`
+}
+
+function flattenResources(
+  resources: Array<EventCalendarResource>,
+  depth = 0,
+): Array<{ resource: EventCalendarResource; depth: number }> {
+  const rows: Array<{ resource: EventCalendarResource; depth: number }> = []
+  for (const resource of resources) {
+    rows.push({ resource, depth })
+    if (resource.children?.length) {
+      rows.push(...flattenResources(resource.children, depth + 1))
+    }
+  }
+  return rows
+}
+
+const DEFAULT_WEEKEND_DAYS = [0, 6]
+
+function resolveOffDay(
+  day: Date,
+  timeZone: string,
+  config: boolean | EventCalendarOffDaysConfig | undefined,
+  defaultWeekendDays?: Array<number>,
+): boolean {
+  if (!config) return false
+  const resolved: EventCalendarOffDaysConfig = config === true ? {} : config
+  const weekendDays = resolved.weekendDays ?? defaultWeekendDays ?? DEFAULT_WEEKEND_DAYS
+  const zoned = toZoned(day, timeZone)
+  if (weekendDays.includes(zoned.getDay())) return true
+  if (resolved.dates?.length) {
+    const key = getDayKey(day, timeZone)
+    if (resolved.dates.some((date) => getDayKey(date, timeZone) === key)) {
+      return true
+    }
+  }
+  return resolved.isOffDay?.(day) ?? false
+}
+
+export {
+  buildEventIndex,
+  defaultEventOrder,
+  eventsOverlap,
+  flattenResources,
+  getDayKey,
+  getDayTotalMinutes,
+  getRangeKey,
+  getViewDateRange,
+  isBarOccurrence,
+  MIN_PACK_SLOT,
+  packTimedSegments,
+  packWeekRowLanes,
+  rangesIntersect,
+  resolveOffDay,
+  segmentOccurrence,
+  snapMinutes,
+  spansMultipleDays,
+  stepDate,
+  toZoned,
+  zonedStartOfDay,
+}
+export type {
+  BuildIndexOptions,
+  EventCalendarDayBucket,
+  EventCalendarIndex,
+  EventCalendarWeekRow,
+  ViewDateRanges,
+  ViewRangeOptions,
+  WeekStartsOn,
+}

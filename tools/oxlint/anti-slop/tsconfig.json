@@ -1,0 +1,9 @@
+{
+  "extends": "@ui-sdk-ds/typescript-config/base.json",
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "erasableSyntaxOnly": true,
+    "noEmit": true
+  },
+  "include": ["."]
+}

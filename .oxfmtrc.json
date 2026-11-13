@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "endOfLine": "lf",
+  "semi": false,
+  "singleQuote": false,
+  "tabWidth": 2,
+  "trailingComma": "all",
+  "printWidth": 100,
+  "sortPackageJson": true,
+  "sortTailwindcss": {
+    "stylesheet": "packages/ui/src/styles/globals.css",
+    "functions": ["cn", "cva"]
+  },
+  "ignorePatterns": [
+    "dist/",
+    "node_modules/",
+    ".next/",
+    ".turbo/",
+    "coverage/",
+    "pnpm-lock.yaml",
+    ".pnpm-store/",
+    ".agents/",
+    ".claude/",
+    "skills-lock.json",
+    "tools/oxlint/anti-slop/"
+  ]
+}

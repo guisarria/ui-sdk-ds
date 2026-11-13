@@ -1,0 +1,27 @@
+{
+  "name": "ui-sdk-ds",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "lint": "oxlint",
+    "format": "oxfmt",
+    "typecheck": "turbo typecheck",
+    "lint:fix": "oxlint --fix",
+    "format:check": "oxfmt --check"
+  },
+  "devDependencies": {
+    "@oxlint/plugins": "^1.93.0",
+    "@ui-sdk-ds/typescript-config": "workspace:*",
+    "oxfmt": "^0.78.0",
+    "oxlint": "^1.93.0",
+    "oxlint-tsgolint": "^7.0.2006",
+    "turbo": "^2.11.11",
+    "typescript": "^7.0.2"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "packageManager": "pnpm@11.25.0"
+}

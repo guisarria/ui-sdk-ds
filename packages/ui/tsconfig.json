@@ -1,0 +1,11 @@
+{
+  "extends": "@ui-sdk-ds/typescript-config/react-library.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "paths": {
+      "@ui-sdk-ds/ui/*": ["./src/*"]
+    }
+  },
+  "include": ["."],
+  "exclude": ["node_modules", "dist"]
+}
