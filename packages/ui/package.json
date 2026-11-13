@@ -9,7 +9,8 @@
     "./lib/highlighter": "./src/lib/highlighter.tsx",
     "./lib/*": "./src/lib/*.ts",
     "./components/*": "./src/components/*.tsx",
-    "./hooks/*": "./src/hooks/*.ts"
+    "./hooks/*": "./src/hooks/*.ts",
+    "./test/setup": "./src/test/setup.ts"
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
@@ -18,8 +19,8 @@
   "dependencies": {
     "@date-fns/tz": "^1.5.0",
     "@shadcn/react": "^0.3.1",
-    "@ui-sdk/core": "0.1.0-beta.1",
-    "@ui-sdk/react": "0.1.0-beta.1",
+    "@ui-sdk/core": "0.1.0-beta.2",
+    "@ui-sdk/react": "0.1.0-beta.2",
     "cn": "^0.5.2",
     "date-fns": "^4.4.0",
     "lucide-react": "^1.72.0",
@@ -34,7 +35,7 @@
     "@tailwindcss/postcss": "^4.3.5",
     "@testing-library/dom": "^10.4.2",
     "@testing-library/react": "^16.3.3",
-    "@testing-library/user-event": "^14.6.9",
+    "@testing-library/user-event": "^14.6.10",
     "@turbo/gen": "^2.11.11",
     "@types/node": "^26.6.6",
     "@types/react": "^19.3.0",

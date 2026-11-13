@@ -7,18 +7,13 @@ import {
   RadioIndicator as RadioIndicatorPrimitive,
 } from "@ui-sdk/react/radio"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
-function RadioGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof RadioGroupPrimitive>, "className"> & { className?: string }) {
+function RadioGroup({ className, ...props }: PrimitiveProps<typeof RadioGroupPrimitive>) {
   return <RadioGroupPrimitive className={cn("grid w-full gap-3", className)} {...props} />
 }
 
-function RadioGroupItem({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof RadioPrimitive>, "className"> & { className?: string }) {
+function RadioGroupItem({ className, ...props }: PrimitiveProps<typeof RadioPrimitive>) {
   return (
     <RadioPrimitive
       className={cn(

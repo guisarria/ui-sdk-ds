@@ -18,12 +18,14 @@ import {
   Combobox,
   ComboboxChip,
   ComboboxChips,
-  ComboboxChipsInput,
+  ComboboxClear,
   ComboboxContent,
   ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxStatus,
+  ComboboxTrigger,
   ComboboxValue,
   useComboboxAnchor,
 } from "@ui-sdk-ds/ui/components/combobox"
@@ -39,15 +41,13 @@ import {
   FieldSet,
   FieldTitle,
 } from "@ui-sdk-ds/ui/components/field"
-import { Input } from "@ui-sdk-ds/ui/components/input"
 import {
+  Input,
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
-  InputGroupInput,
   InputGroupText,
-  InputGroupTextarea,
-} from "@ui-sdk-ds/ui/components/input-group"
+} from "@ui-sdk-ds/ui/components/input"
 import {
   InputOTP,
   InputOTPGroup,
@@ -56,11 +56,6 @@ import {
 } from "@ui-sdk-ds/ui/components/input-otp"
 import { Kbd } from "@ui-sdk-ds/ui/components/kbd"
 import { Label } from "@ui-sdk-ds/ui/components/label"
-import {
-  NativeSelect,
-  NativeSelectOptGroup,
-  NativeSelectOption,
-} from "@ui-sdk-ds/ui/components/native-select"
 import { Popover, PopoverContent, PopoverTrigger } from "@ui-sdk-ds/ui/components/popover"
 import { RadioGroup, RadioGroupItem } from "@ui-sdk-ds/ui/components/radio-group"
 import {
@@ -79,17 +74,12 @@ import { Switch } from "@ui-sdk-ds/ui/components/switch"
 import { Textarea } from "@ui-sdk-ds/ui/components/textarea"
 import { toast } from "@ui-sdk-ds/ui/components/toast"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@ui-sdk-ds/ui/components/tooltip"
+import { type AsyncOptionsContext, useAsyncOptions } from "@ui-sdk-ds/ui/hooks/use-async-options"
 
-import { labels, regionGroups, regionItems, roleItems, timezones } from "./data"
+import { labels, members, regionGroups, regionItems, roleItems, timezones } from "./data"
 import { MoreInputs } from "./inputs-more"
 import { Block, Example, Section } from "./showcase"
 import { previewState, StateMatrix } from "./state-matrix"
-
-const machineItems = [
-  { label: "Standard · 4 vCPU", value: "standard" },
-  { label: "Enhanced · 8 vCPU", value: "enhanced" },
-  { label: "Turbo · 30 vCPU", value: "turbo" },
-]
 
 type DateRange = { from: Date | undefined; to?: Date | undefined }
 
@@ -105,7 +95,6 @@ export function Inputs() {
       <FieldStatesBlock />
       <InputGroupBlock />
       <SelectBlock />
-      <NativeSelectBlock />
       <ComboboxBlock />
       <SelectionBlock />
       <SwitchBlock />
@@ -135,7 +124,7 @@ function FieldBlock() {
       <Example title="Error" className="block">
         <Field name="custom-domain" invalid>
           <FieldLabel>Custom domain</FieldLabel>
-          <Input defaultValue="my site.com" aria-invalid />
+          <Input defaultValue="my site.com" />
           <FieldError>Domains can’t contain spaces.</FieldError>
         </Field>
       </Example>
@@ -199,7 +188,7 @@ function FieldBlock() {
   )
 }
 
-const fieldRows = ["input", "textarea", "native-select", "select"] as const
+const fieldRows = ["input", "textarea", "select"] as const
 
 function FieldStatesBlock() {
   return (
@@ -258,23 +247,6 @@ function FieldStatesBlock() {
                 />
               )
             }
-            if (row === "native-select") {
-              return (
-                <NativeSelect
-                  name="build-machine"
-                  aria-label="Build machine"
-                  aria-invalid={invalid}
-                  className="min-w-40"
-                  {...props}
-                >
-                  {machineItems.map((item) => (
-                    <NativeSelectOption key={item.value} value={item.value}>
-                      {item.label}
-                    </NativeSelectOption>
-                  ))}
-                </NativeSelect>
-              )
-            }
             if (row === "select") {
               return (
                 <Select name="role" items={roleItems} placeholder="Choose a role">
@@ -289,7 +261,7 @@ function FieldStatesBlock() {
                   <SelectContent>
                     <SelectGroup>
                       {roleItems.map((item) => (
-                        <SelectItem key={item.label} value={item.value}>
+                        <SelectItem key={item.value} value={item.value}>
                           {item.label}
                         </SelectItem>
                       ))}
@@ -320,14 +292,14 @@ function InputGroupBlock() {
     <Block
       id="input-group"
       title="Input group"
-      description="An input with attached icons, text, buttons or keyboard hints. Always use InputGroupInput inside it, never a bare Input."
+      description="An input with attached icons, text, buttons or keyboard hints. Pressing its text focuses the input, and InputClear empties it."
     >
       <Example title="Typical · search with a shortcut" className="block">
         <InputGroup>
           <InputGroupAddon>
             <SearchIcon />
           </InputGroupAddon>
-          <InputGroupInput
+          <Input
             name="search-projects"
             aria-label="Search projects"
             placeholder="Search projects…"
@@ -342,7 +314,7 @@ function InputGroupBlock() {
           <InputGroupAddon>
             <InputGroupText>https://</InputGroupText>
           </InputGroupAddon>
-          <InputGroupInput name="subdomain" aria-label="Subdomain" defaultValue="status" />
+          <Input name="subdomain" aria-label="Subdomain" defaultValue="status" />
           <InputGroupAddon align="inline-end">
             <InputGroupText>.example.com</InputGroupText>
           </InputGroupAddon>
@@ -351,7 +323,7 @@ function InputGroupBlock() {
       <Example title="With a button and a pending state" className="block">
         <div className="flex flex-col gap-4">
           <InputGroup>
-            <InputGroupInput
+            <Input
               name="deploy-hook-url"
               aria-label="Deploy hook URL"
               readOnly
@@ -378,7 +350,7 @@ function InputGroupBlock() {
             <InputGroupAddon>
               <GlobeIcon />
             </InputGroupAddon>
-            <InputGroupInput name="domain" aria-label="Domain" defaultValue="status.example.com" />
+            <Input name="domain" aria-label="Domain" defaultValue="status.example.com" />
             <InputGroupAddon align="inline-end">
               <Spinner aria-hidden="true" />
               Checking DNS
@@ -389,7 +361,7 @@ function InputGroupBlock() {
       <Example title="Textarea with a toolbar · invalid" className="block">
         <div className="flex flex-col gap-4">
           <InputGroup>
-            <InputGroupTextarea
+            <Textarea
               name="message"
               aria-label="Message"
               placeholder="Ask about this deployment…"
@@ -401,7 +373,7 @@ function InputGroupBlock() {
               <InputGroupButton
                 size="icon-xs"
                 variant="brand"
-                className="ml-auto"
+                className="ms-auto"
                 aria-label="Send"
               >
                 <ArrowUpIcon />
@@ -414,7 +386,7 @@ function InputGroupBlock() {
               <InputGroupAddon>
                 <InputGroupText>https://</InputGroupText>
               </InputGroupAddon>
-              <InputGroupInput defaultValue="hooks.example.com/ deploy" aria-invalid />
+              <Input defaultValue="hooks.example.com/ deploy" />
             </InputGroup>
             <FieldError>URLs can’t contain spaces.</FieldError>
           </Field>
@@ -431,24 +403,33 @@ function SelectBlock() {
       title="Select"
       description="Picks one option from a list that doesn’t need searching. Past about ten options, use a Combobox."
     >
-      <Example title="Typical · with a placeholder" className="block">
+      <Example title="Typical · a sheet on small touch screens" className="block">
         <Field name="invite-role">
-          <FieldLabel>Role</FieldLabel>
-          <Select items={roleItems} placeholder="Choose a role">
+          <FieldLabel>Invite as</FieldLabel>
+          <Select
+            items={roleItems}
+            placeholder="Choose a role"
+            presentation="auto"
+            onValueChange={(role, details) => {
+              if (details.source === "agent" && role === "owner") details.cancel()
+            }}
+          >
             <SelectTrigger className="w-full">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               <SelectGroup>
                 {roleItems.map((item) => (
-                  <SelectItem key={item.label} value={item.value}>
+                  <SelectItem key={item.value} value={item.value}>
                     {item.label}
                   </SelectItem>
                 ))}
               </SelectGroup>
             </SelectContent>
           </Select>
-          <FieldDescription>Viewers can’t trigger deployments.</FieldDescription>
+          <FieldDescription>
+            Viewers can’t trigger deployments. Only a person can invite an owner.
+          </FieldDescription>
         </Field>
       </Example>
       <Example title="Groups and separators · below the trigger" className="block">
@@ -531,13 +512,13 @@ function SelectBlock() {
           <Field name="owner-role" invalid>
             <FieldLabel>Role</FieldLabel>
             <Select items={roleItems} placeholder="Choose a role">
-              <SelectTrigger className="w-full" aria-invalid>
+              <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 <SelectGroup>
                   {roleItems.map((item) => (
-                    <SelectItem key={item.label} value={item.value}>
+                    <SelectItem key={item.value} value={item.value}>
                       {item.label}
                     </SelectItem>
                   ))}
@@ -570,56 +551,69 @@ function SelectBlock() {
   )
 }
 
-function NativeSelectBlock() {
+type Reviewer = { value: string; label: string }
+
+function searchReviewers(query: string, { signal }: AsyncOptionsContext) {
+  return new Promise<Array<Reviewer>>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      const needle = query.trim().toLowerCase()
+      resolve(
+        members
+          .filter((member) => member.name.toLowerCase().includes(needle))
+          .map((member) => ({ value: member.email, label: member.name })),
+      )
+    }, 300)
+    signal.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(timer)
+        reject(signal.reason)
+      },
+      { once: true },
+    )
+  })
+}
+
+function ReviewerSearch() {
+  const reviewers = useAsyncOptions(searchReviewers, { immediate: true })
+
   return (
-    <Block
-      id="native-select"
-      title="Native select"
-      description="The browser’s own select, styled to match. Use it on mobile-heavy forms and anywhere JavaScript might not load."
-    >
-      <Example title="Typical · option groups" className="block">
-        <Field name="node-version">
-          <FieldLabel>Node.js version</FieldLabel>
-          <NativeSelect defaultValue="22" className="w-full">
-            <NativeSelectOptGroup label="Supported">
-              <NativeSelectOption value="24">24.x</NativeSelectOption>
-              <NativeSelectOption value="22">22.x (default)</NativeSelectOption>
-            </NativeSelectOptGroup>
-            <NativeSelectOptGroup label="Deprecated">
-              <NativeSelectOption value="20">20.x</NativeSelectOption>
-            </NativeSelectOptGroup>
-          </NativeSelect>
-        </Field>
-      </Example>
-      <Example title="Sizes · sm, default · disabled">
-        <NativeSelect
-          name="build-machine"
-          size="sm"
-          aria-label="Build machine"
-          defaultValue="standard"
-        >
-          {machineItems.map((item) => (
-            <NativeSelectOption key={item.value} value={item.value}>
-              {item.label}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-        <NativeSelect name="build-machine" aria-label="Build machine" defaultValue="enhanced">
-          {machineItems.map((item) => (
-            <NativeSelectOption key={item.value} value={item.value}>
-              {item.label}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-        <NativeSelect name="build-machine" aria-label="Build machine" defaultValue="turbo" disabled>
-          {machineItems.map((item) => (
-            <NativeSelectOption key={item.value} value={item.value}>
-              {item.label}
-            </NativeSelectOption>
-          ))}
-        </NativeSelect>
-      </Example>
-    </Block>
+    <Field name="reviewer">
+      <FieldLabel>Reviewer</FieldLabel>
+      <Combobox
+        items={reviewers.items}
+        filter={false}
+        status={reviewers.status}
+        onQueryChange={reviewers.setQuery}
+      >
+        <InputGroup>
+          <ComboboxInput placeholder="Search the team" />
+          <ComboboxTrigger />
+        </InputGroup>
+        <ComboboxContent>
+          <ComboboxStatus>
+            {(state) =>
+              state.status === "error"
+                ? "Couldn’t load the team."
+                : state.loading
+                  ? "Searching…"
+                  : `${state.count} ${state.count === 1 ? "person" : "people"}`
+            }
+          </ComboboxStatus>
+          <ComboboxEmpty>
+            {(state) => (state.empty && !state.loading ? `No one matches “${state.query}”.` : null)}
+          </ComboboxEmpty>
+          <ComboboxList>
+            {(item: Reviewer) => (
+              <ComboboxItem key={item.value} value={item.value} label={item.label}>
+                {item.label}
+              </ComboboxItem>
+            )}
+          </ComboboxList>
+        </ComboboxContent>
+      </Combobox>
+      <FieldDescription>Search runs on the server, so the list doesn’t filter itself.</FieldDescription>
+    </Field>
   )
 }
 
@@ -636,7 +630,11 @@ function ComboboxBlock() {
         <Field name="timezone">
           <FieldLabel>Timezone</FieldLabel>
           <Combobox items={timezones} defaultValue="Europe/Lisbon">
-            <ComboboxInput placeholder="Search timezones" showClear />
+            <InputGroup>
+              <ComboboxInput placeholder="Search timezones" />
+              <ComboboxClear />
+              <ComboboxTrigger />
+            </InputGroup>
             <ComboboxContent>
               <ComboboxEmpty>No timezones match.</ComboboxEmpty>
               <ComboboxList>
@@ -664,7 +662,7 @@ function ComboboxBlock() {
                         {value}
                       </ComboboxChip>
                     ))}
-                    <ComboboxChipsInput placeholder={values.length ? "" : "Add labels"} />
+                    <ComboboxInput placeholder={values.length ? "" : "Add labels"} />
                   </>
                 )}
               </ComboboxValue>
@@ -682,12 +680,18 @@ function ComboboxBlock() {
           </Combobox>
         </Field>
       </Example>
+      <Example title="Async · results load as you type" className="block">
+        <ReviewerSearch />
+      </Example>
       <Example title="Invalid and disabled" className="block">
         <FieldGroup>
           <Field name="owner-timezone" invalid>
             <FieldLabel>Team timezone</FieldLabel>
             <Combobox items={timezones}>
-              <ComboboxInput placeholder="Search timezones" aria-invalid />
+              <InputGroup>
+                <ComboboxInput placeholder="Search timezones" />
+                <ComboboxTrigger />
+              </InputGroup>
               <ComboboxContent>
                 <ComboboxEmpty>No timezones match.</ComboboxEmpty>
                 <ComboboxList>
@@ -704,7 +708,10 @@ function ComboboxBlock() {
           <Field name="locked-timezone" disabled>
             <FieldLabel>Billing timezone</FieldLabel>
             <Combobox items={timezones} defaultValue="America/New_York" disabled>
-              <ComboboxInput />
+              <InputGroup>
+                <ComboboxInput />
+                <ComboboxTrigger />
+              </InputGroup>
               <ComboboxContent>
                 <ComboboxList>
                   {(item: string) => (
@@ -743,7 +750,7 @@ function SelectionBlock() {
       <Example title="Typical · radio group" className="block">
         <FieldSet>
           <FieldLegend variant="label">Rollout strategy</FieldLegend>
-          <RadioGroup name="rollout-strategy" defaultValue="rolling">
+          <RadioGroup name="rollout-strategy" aria-label="Rollout strategy" defaultValue="rolling">
             <Field name="strategy-rolling" orientation="horizontal">
               <RadioGroupItem value="rolling" />
               <FieldLabel className="font-normal">Rolling, 25% at a time</FieldLabel>
@@ -762,7 +769,12 @@ function SelectionBlock() {
       <Example title="Choice cards" wide className="block">
         <FieldSet>
           <FieldLegend variant="label">Plan</FieldLegend>
-          <RadioGroup name="plan" defaultValue="pro" className="grid gap-3 md:grid-cols-3">
+          <RadioGroup
+            name="plan"
+            aria-label="Plan"
+            defaultValue="pro"
+            className="grid gap-3 md:grid-cols-3"
+          >
             {[
               {
                 value: "hobby",
@@ -962,7 +974,7 @@ function OtpBlock() {
             >
               <InputOTPGroup>
                 {[0, 1, 2, 3, 4, 5].map((index) => (
-                  <InputOTPSlot key={index} index={index} aria-invalid />
+                  <InputOTPSlot key={index} index={index} />
                 ))}
               </InputOTPGroup>
             </InputOTP>

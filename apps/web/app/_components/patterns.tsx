@@ -75,13 +75,7 @@ import {
   FieldSeparator,
   FieldTitle,
 } from "@ui-sdk-ds/ui/components/field"
-import { Input } from "@ui-sdk-ds/ui/components/input"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupInput,
-  InputGroupText,
-} from "@ui-sdk-ds/ui/components/input-group"
+import { Input, InputGroup, InputGroupAddon, InputGroupText } from "@ui-sdk-ds/ui/components/input"
 import {
   Item,
   ItemActions,
@@ -211,7 +205,7 @@ function MemberList() {
               {index > 0 && <ItemSeparator className="my-0" />}
               <Item size="xs" className="px-0 py-2.5">
                 <ItemMedia>
-                  <Avatar size="sm">
+                  <Avatar size="sm" aria-hidden="true">
                     <AvatarImage src={avatarSrc(index * 70 + 200)} alt="" />
                     <AvatarFallback>{member.initials}</AvatarFallback>
                   </Avatar>
@@ -268,7 +262,11 @@ function DangerZone() {
               <FieldTitle>Transfer project</FieldTitle>
               <FieldDescription>Move dashboard and its domains to another team.</FieldDescription>
             </FieldContent>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              data-agent-confirm="Moves dashboard and its domains to another team"
+            >
               Transfer
             </Button>
           </Field>
@@ -294,6 +292,7 @@ function DangerZone() {
                   <AlertDialogCancel>Keep project</AlertDialogCancel>
                   <AlertDialogAction
                     variant="destructive"
+                    data-agent-confirm="Deletes dashboard, so its visitors get a 404 right away"
                     onClick={() => {
                       toast({
                         title: "dashboard scheduled for deletion",
@@ -441,11 +440,10 @@ function SettingsScreen() {
               </Button>
             </div>
           </div>
-          <TabsList variant="line">
+          <TabsList variant="line" aria-label="Project settings">
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="domains">
-              Domains
-              <Badge variant="secondary">{domains.length}</Badge>
+              Domains <Badge variant="secondary">{domains.length}</Badge>
             </TabsTrigger>
             <TabsTrigger value="members">Members</TabsTrigger>
             <TabsTrigger value="billing">Billing</TabsTrigger>
@@ -466,8 +464,7 @@ function SettingsScreen() {
                     <Input
                       className="sm:max-w-sm"
                       value={form.name}
-                      aria-invalid={nameError ? true : undefined}
-                      onChange={(event) => setForm({ ...form, name: event.target.value })}
+                      onValueChange={(name) => setForm({ ...form, name })}
                     />
                     {nameError ? (
                       <FieldError>{nameError}</FieldError>
@@ -505,9 +502,9 @@ function SettingsScreen() {
                       <InputGroupAddon>
                         <InputGroupText>acme/platform/</InputGroupText>
                       </InputGroupAddon>
-                      <InputGroupInput
+                      <Input
                         value={form.root}
-                        onChange={(event) => setForm({ ...form, root: event.target.value })}
+                        onValueChange={(root) => setForm({ ...form, root })}
                       />
                     </InputGroup>
                   </Field>
@@ -625,12 +622,12 @@ function SettingsScreen() {
                       <InputGroupAddon>
                         <GlobeIcon />
                       </InputGroupAddon>
-                      <InputGroupInput
+                      <Input
                         name="domain"
                         aria-label="Domain"
                         placeholder="status.example.com"
                         value={newDomain}
-                        onChange={(event) => setNewDomain(event.target.value)}
+                        onValueChange={setNewDomain}
                       />
                     </InputGroup>
                     <Button type="submit" variant="outline">
@@ -673,7 +670,7 @@ function SettingsScreen() {
                         <TableCell>
                           <DomainStatus status={domain.status} />
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-end">
                           <DropdownMenu>
                             <DropdownMenuTrigger
                               render={
@@ -695,6 +692,7 @@ function SettingsScreen() {
                               <DropdownMenuGroup>
                                 <DropdownMenuItem
                                   variant="destructive"
+                                  data-agent-confirm={`Removes ${domain.name} from the project`}
                                   onClick={() =>
                                     setDomains((current) =>
                                       current.filter((item) => item.name !== domain.name),

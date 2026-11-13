@@ -23,6 +23,7 @@
   },
   "rules": {
     "anti-slop/no-chained-type-assertions": "error",
+    "no-unused-vars": "error",
     "anti-slop/no-known-value-widening": "error",
     "anti-slop/no-noop-catch": "error",
     "anti-slop/no-object-parameters": "error",
@@ -73,7 +74,7 @@
     "import/no-unassigned-import": [
       "error",
       {
-        "allow": ["**/*.css"]
+        "allow": ["**/*.css", "@ui-sdk-ds/ui/test/setup"]
       }
     ],
     "no-else-return": [

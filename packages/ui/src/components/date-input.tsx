@@ -6,6 +6,7 @@ import {
   DateInputSegment as DateInputSegmentPrimitive,
 } from "@ui-sdk/react/date-input"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 const segmentFieldClassName =
   "flex h-8 w-full min-w-0 items-center rounded-2xl border border-transparent bg-input/50 px-2.5 py-1 text-base tabular-nums transition-[color,box-shadow] duration-200 outline-none focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 data-disabled:pointer-events-none data-disabled:opacity-50 data-invalid:border-destructive data-invalid:ring-3 data-invalid:ring-destructive/20 md:text-sm dark:data-invalid:border-destructive/50 dark:data-invalid:ring-destructive/40"
@@ -16,20 +17,14 @@ const segmentClassName =
 function DateInputSegment({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof DateInputSegmentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof DateInputSegmentPrimitive>) {
   const id = React.useId()
   return (
     <DateInputSegmentPrimitive id={id} className={cn(segmentClassName, className)} {...props} />
   )
 }
 
-function DateInput({
-  className,
-  children,
-  ...props
-}: Omit<React.ComponentProps<typeof DateInputPrimitive>, "className"> & { className?: string }) {
+function DateInput({ className, children, ...props }: PrimitiveProps<typeof DateInputPrimitive>) {
   return (
     <DateInputPrimitive className={cn(segmentFieldClassName, className)} {...props}>
       {children ??

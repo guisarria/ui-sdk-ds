@@ -9,7 +9,7 @@ interface EventCalendarI18nConfig {
     today: string
     previous: string
     next: string
-    addEvent: string
+    addEvent: (day: string) => string
     allDay: string
     more: (count: number) => string
     noEvents: string
@@ -79,7 +79,7 @@ const DEFAULT_LABELS: EventCalendarI18nConfig["labels"] = {
   today: "Today",
   previous: "Previous",
   next: "Next",
-  addEvent: "Add event",
+  addEvent: (day) => `Add event on ${day}`,
   allDay: "All day",
   more: (count) => `+${count} more`,
   noEvents: "No events",

@@ -10,7 +10,11 @@ import {
   ToastTitle as ToastTitlePrimitive,
   createToaster,
   toast,
+  type ToastData,
+  type ToastRegionProps,
+  type ToastType,
 } from "@ui-sdk/react/toast"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
 import { cn } from "cn"
 import {
   XIcon,
@@ -22,29 +26,19 @@ import {
 } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren, RenderProps } from "@ui-sdk-ds/ui/lib/parts"
 
-function ToastViewport({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToastRegionPrimitive>, "className"> & { className?: string }) {
+function ToastViewport({ className, ...props }: PrimitiveProps<typeof ToastRegionPrimitive>) {
   return (
     <ToastRegionPrimitive
-      side="bottom"
-      align="end"
-      className={cn(
-        "m-4 h-(--toast-front-height) w-[min(24rem,calc(100vw-2rem))] overflow-visible bg-transparent outline-none [--dir:-1] data-expanded:h-[calc(var(--toast-stack-height)+(var(--toast-count)-1)*0.75rem)] data-[side=top]:[--dir:1]",
-        className,
-      )}
+      {...toastViewportProps}
       {...props}
+      className={cn(toastViewportClassName, className)}
     />
   )
 }
 
-function Toast({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToastPrimitive>, "className"> & { className?: string }) {
+function Toast({ className, ...props }: PrimitiveProps<typeof ToastPrimitive>) {
   return (
     <ToastPrimitive
       className={cn(
@@ -62,32 +56,31 @@ function Toast({
   )
 }
 
-function ToastContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="toast-content"
-      className={cn(
-        "flex h-full items-center gap-3 overflow-hidden p-4 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-not-data-front/toast:group-not-data-expanded/toast:opacity-0",
-        className,
-      )}
-      {...props}
-    />
+function ToastContent({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "toast-content",
+        className: cn(
+          "flex h-full items-center gap-3 overflow-hidden p-4 transition-opacity duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] group-not-data-front/toast:group-not-data-expanded/toast:opacity-0",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function ToastTitle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToastTitlePrimitive>, "className"> & { className?: string }) {
+function ToastTitle({ className, ...props }: PrimitiveProps<typeof ToastTitlePrimitive>) {
   return <ToastTitlePrimitive className={cn("text-sm font-medium", className)} {...props} />
 }
 
 function ToastDescription({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ToastDescriptionPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ToastDescriptionPrimitive>) {
   return (
     <ToastDescriptionPrimitive
       className={cn("text-sm text-muted-foreground empty:hidden", className)}
@@ -96,10 +89,7 @@ function ToastDescription({
   )
 }
 
-function ToastAction({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToastActionPrimitive>, "className"> & { className?: string }) {
+function ToastAction({ className, ...props }: PrimitiveProps<typeof ToastActionPrimitive>) {
   return (
     <ToastActionPrimitive
       className={cn(buttonVariants({ variant: "outline", size: "sm" }), "shrink-0", className)}
@@ -112,9 +102,7 @@ function ToastClose({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ToastClosePrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ToastClosePrimitive>>) {
   return (
     <ToastClosePrimitive
       aria-label="Close toast"
@@ -130,32 +118,24 @@ function ToastClose({
   )
 }
 
-function ToastIcon({ type }: { type: string | undefined }) {
-  let icon: React.ReactNode = null
+const toastIcons = {
+  default: null,
+  success: <CircleCheckIcon className="text-success" />,
+  info: <InfoIcon className="text-info" />,
+  warning: <TriangleAlertIcon className="text-warning" />,
+  error: <OctagonXIcon className="text-destructive" />,
+  loading: <Loader2Icon className="animate-spin" />,
+} satisfies Record<ToastType, React.ReactNode>
 
-  if (type === "success") {
-    icon = <CircleCheckIcon className="text-success" aria-hidden="true" />
-  }
-  if (type === "info") {
-    icon = <InfoIcon className="text-info" aria-hidden="true" />
-  }
-  if (type === "warning") {
-    icon = <TriangleAlertIcon className="text-warning" aria-hidden="true" />
-  }
-  if (type === "error") {
-    icon = <OctagonXIcon className="text-destructive" aria-hidden="true" />
-  }
-  if (type === "loading") {
-    icon = <Loader2Icon className="animate-spin" aria-hidden="true" />
-  }
-
+function ToastIcon({ type }: { type: ToastType }) {
+  const icon = toastIcons[type]
   if (!icon) {
     return null
   }
-
   return (
     <span
       data-slot="toast-icon"
+      aria-hidden="true"
       className="shrink-0 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4"
     >
       {icon}
@@ -163,36 +143,35 @@ function ToastIcon({ type }: { type: string | undefined }) {
   )
 }
 
-function Toaster({
-  children,
-  ...props
-}: Omit<React.ComponentProps<typeof ToastViewport>, "children"> & {
-  children?: React.ReactNode
-}) {
+function renderToast({ type, action }: ToastData<React.ReactNode>) {
   return (
-    <>
-      {children}
-      <ToastViewport {...props}>
-        {(item) => (
-          <Toast>
-            <ToastContent>
-              <ToastIcon type={item.type} />
-              <div className="flex min-w-0 flex-1 flex-col gap-1">
-                <ToastTitle />
-                <ToastDescription />
-              </div>
-              {item.action && <ToastAction />}
-              <ToastClose />
-            </ToastContent>
-          </Toast>
-        )}
-      </ToastViewport>
-    </>
+    <Toast>
+      <ToastContent>
+        <ToastIcon type={type} />
+        <div className="flex min-w-0 flex-1 flex-col gap-1">
+          <ToastTitle />
+          <ToastDescription />
+        </div>
+        {action ? <ToastAction /> : null}
+        <ToastClose />
+      </ToastContent>
+    </Toast>
   )
 }
 
+const toastViewportClassName = cn(
+  "m-4 h-(--toast-front-height) w-[min(24rem,calc(100vw-2rem))] overflow-visible bg-transparent outline-none [--dir:-1] data-expanded:h-[calc(var(--toast-stack-height)+(var(--toast-count)-1)*0.75rem)] data-[side=top]:[--dir:1]",
+)
+
+const toastViewportProps: ToastRegionProps & { "data-agent-hidden": boolean } = {
+  "data-agent-hidden": true,
+  side: "bottom",
+  align: "end",
+  className: toastViewportClassName,
+  children: renderToast,
+}
+
 export {
-  Toaster,
   Toast,
   ToastAction,
   ToastClose,
@@ -200,6 +179,7 @@ export {
   ToastDescription,
   ToastTitle,
   ToastViewport,
+  toastViewportProps,
   createToaster,
   toast,
 }

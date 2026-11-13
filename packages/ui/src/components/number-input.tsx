@@ -14,7 +14,7 @@ import { cn } from "cn"
 import { MinusIcon, MoveHorizontalIcon, PlusIcon } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 const stepClassName = cn(
   buttonVariants({ variant: "ghost", size: "icon-xs" }),
@@ -27,7 +27,7 @@ function NumberInput({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   ...props
-}: Omit<React.ComponentProps<typeof NumberInputPrimitive>, "className"> & { className?: string }) {
+}: PrimitiveProps<typeof NumberInputPrimitive>) {
   const named = children === undefined
   return (
     <NumberInputPrimitive
@@ -50,9 +50,7 @@ function NumberInput({
 function NumberInputGroup({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NumberInputGroupPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NumberInputGroupPrimitive>) {
   return (
     <NumberInputGroupPrimitive
       className={cn(
@@ -67,9 +65,7 @@ function NumberInputGroup({
 function NumberInputControl({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NumberInputControlPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NumberInputControlPrimitive>) {
   return (
     <NumberInputControlPrimitive
       className={cn(
@@ -85,11 +81,7 @@ function NumberInputDecrement({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof NumberInputDecrementPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof NumberInputDecrementPrimitive>>) {
   return (
     <NumberInputDecrementPrimitive
       aria-label="Decrease"
@@ -105,11 +97,7 @@ function NumberInputIncrement({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof NumberInputIncrementPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof NumberInputIncrementPrimitive>>) {
   return (
     <NumberInputIncrementPrimitive
       aria-label="Increase"
@@ -124,9 +112,7 @@ function NumberInputIncrement({
 function NumberInputScrubArea({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NumberInputScrubAreaPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NumberInputScrubAreaPrimitive>) {
   return (
     <NumberInputScrubAreaPrimitive
       className={cn("w-fit cursor-ew-resize text-sm font-medium select-none", className)}
@@ -139,11 +125,7 @@ function NumberInputScrubAreaCursor({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof NumberInputScrubAreaCursorPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof NumberInputScrubAreaCursorPrimitive>>) {
   return (
     <NumberInputScrubAreaCursorPrimitive
       className={cn("pointer-events-none text-foreground drop-shadow-sm [&_svg]:size-4", className)}

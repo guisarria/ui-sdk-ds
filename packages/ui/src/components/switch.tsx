@@ -6,12 +6,13 @@ import {
   SwitchThumb as SwitchThumbPrimitive,
 } from "@ui-sdk/react/switch"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 function Switch({
   className,
   size = "default",
   ...props
-}: Omit<React.ComponentProps<typeof SwitchPrimitive>, "className"> & { className?: string } & {
+}: PrimitiveProps<typeof SwitchPrimitive> & {
   size?: "sm" | "default"
 }) {
   return (

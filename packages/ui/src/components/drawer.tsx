@@ -13,7 +13,8 @@ import {
 import { cn } from "cn"
 import { kbdClassName } from "@ui-sdk-ds/ui/components/kbd"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren, RenderProps } from "@ui-sdk-ds/ui/lib/parts"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
 
 type SwipeDirection = "up" | "down" | "left" | "right"
 
@@ -47,26 +48,17 @@ function Drawer({
   const contextValue = React.useMemo(() => ({ modal, showSwipeHandle }), [modal, showSwipeHandle])
 
   return (
-    <DrawerContext.Provider value={contextValue}>
+    <DrawerContext value={contextValue}>
       <DrawerPrimitive
         modal={modal}
         side={side ?? (swipeDirection ? sideFromSwipe[swipeDirection] : "bottom")}
         {...props}
       />
-    </DrawerContext.Provider>
+    </DrawerContext>
   )
 }
 
-function DrawerPortal({ children }: { children?: React.ReactNode }) {
-  return children
-}
-
-function DrawerOverlay({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DrawerBackdropPrimitive>, "className"> & {
-  className?: string
-}) {
+function DrawerOverlay({ className, ...props }: PrimitiveProps<typeof DrawerBackdropPrimitive>) {
   return (
     <DrawerBackdropPrimitive
       className={cn(
@@ -78,10 +70,7 @@ function DrawerOverlay({
   )
 }
 
-function DrawerSwipeHandle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DrawerHandlePrimitive>, "className"> & { className?: string }) {
+function DrawerSwipeHandle({ className, ...props }: PrimitiveProps<typeof DrawerHandlePrimitive>) {
   return (
     <DrawerHandlePrimitive
       className={cn(
@@ -97,10 +86,8 @@ function DrawerContent({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof DrawerContentPrimitive>, "className"> & { className?: string }
->) {
-  const { modal, showSwipeHandle } = React.useContext(DrawerContext)
+}: WithNodeChildren<PrimitiveProps<typeof DrawerContentPrimitive>>) {
+  const { modal, showSwipeHandle } = React.use(DrawerContext)
 
   return (
     <>
@@ -127,33 +114,38 @@ function DrawerContent({
   )
 }
 
-function DrawerHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="drawer-header"
-      className={cn(
-        "flex shrink-0 flex-col gap-0.5 p-4 pb-0 group-data-[side=bottom]/drawer-popup:text-center group-data-[side=top]/drawer-popup:text-center md:gap-1.5 md:text-left",
-        className,
-      )}
-      {...props}
-    />
+function DrawerHeader({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "drawer-header",
+        className: cn(
+          "flex shrink-0 flex-col gap-0.5 p-4 pb-0 group-data-[side=bottom]/drawer-popup:text-center group-data-[side=top]/drawer-popup:text-center md:gap-1.5 md:text-start",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function DrawerFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="drawer-footer"
-      className={cn("mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0", className)}
-      {...props}
-    />
+function DrawerFooter({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "drawer-footer",
+        className: cn("mt-auto flex shrink-0 flex-col gap-2 p-4 pt-0", className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function DrawerTitle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DrawerTitlePrimitive>, "className"> & { className?: string }) {
+function DrawerTitle({ className, ...props }: PrimitiveProps<typeof DrawerTitlePrimitive>) {
   return (
     <DrawerTitlePrimitive
       className={cn("font-heading text-base font-medium text-foreground", className)}
@@ -165,9 +157,7 @@ function DrawerTitle({
 function DrawerDescription({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof DrawerDescriptionPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof DrawerDescriptionPrimitive>) {
   return (
     <DrawerDescriptionPrimitive
       className={cn("text-sm text-balance text-muted-foreground", className)}
@@ -176,18 +166,12 @@ function DrawerDescription({
   )
 }
 
-function DrawerShortcut({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DrawerShortcutPrimitive>, "className"> & {
-  className?: string
-}) {
+function DrawerShortcut({ className, ...props }: PrimitiveProps<typeof DrawerShortcutPrimitive>) {
   return <DrawerShortcutPrimitive className={cn(kbdClassName, className)} {...props} />
 }
 
 export {
   Drawer,
-  DrawerPortal,
   DrawerOverlay,
   DrawerSwipeHandle,
   DrawerContent,

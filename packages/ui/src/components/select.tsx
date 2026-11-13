@@ -23,7 +23,7 @@ import {
 import { cn } from "cn"
 import { CheckIcon, ChevronDownIcon, SearchIcon, XIcon } from "lucide-react"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 import type { ListData, SelectProps } from "@ui-sdk/react/select"
 
 // With `items`, ui-sdk only recognizes a SelectContent that is the select's own child, so ours is swapped for the primitive here.
@@ -33,11 +33,8 @@ function Select<T = string, Multiple extends boolean | undefined = false>(
   return (
     <SelectPrimitive<T, Multiple> {...props}>
       {React.Children.map(props.children, (child) =>
-        React.isValidElement<
-          Omit<React.ComponentProps<typeof SelectContentPrimitive>, "className"> & {
-            className?: string
-          }
-        >(child) && child.type === SelectContent ? (
+        React.isValidElement<PrimitiveProps<typeof SelectContentPrimitive>>(child) &&
+        child.type === SelectContent ? (
           <SelectContentPrimitive key={child.key} {...selectContentProps(child.props)} />
         ) : (
           child
@@ -47,10 +44,7 @@ function Select<T = string, Multiple extends boolean | undefined = false>(
   )
 }
 
-function SelectGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectGroupPrimitive>, "className"> & { className?: string }) {
+function SelectGroup({ className, ...props }: PrimitiveProps<typeof SelectGroupPrimitive>) {
   return <SelectGroupPrimitive className={cn("scroll-my-1.5 p-1", className)} {...props} />
 }
 
@@ -59,14 +53,11 @@ function SelectValue<Value = unknown>({
   className,
   children,
   ...props
-}: Omit<
-  Omit<React.ComponentProps<typeof SelectValuePrimitive>, "className"> & { className?: string },
-  "children"
-> & {
+}: Omit<PrimitiveProps<typeof SelectValuePrimitive>, "children"> & {
   children?: React.ReactNode | ((value: Value) => React.ReactNode)
 }) {
   return (
-    <SelectValuePrimitive className={cn("flex flex-1 text-left", className)} {...props}>
+    <SelectValuePrimitive className={cn("flex flex-1 text-start", className)} {...props}>
       {typeof children === "function" ? (state) => children(state.value as Value) : children}
     </SelectValuePrimitive>
   )
@@ -77,9 +68,7 @@ function SelectTrigger({
   size = "default",
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof SelectTriggerPrimitive>, "className"> & { className?: string }
-> & {
+}: WithNodeChildren<PrimitiveProps<typeof SelectTriggerPrimitive>> & {
   children?: React.ReactNode
   size?: "sm" | "default"
 }) {
@@ -109,9 +98,7 @@ function selectContentProps({
   alignOffset = 0,
   alignItemWithTrigger = true,
   ...props
-}: Omit<React.ComponentProps<typeof SelectContentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof SelectContentPrimitive>) {
   return {
     "data-align-trigger": alignItemWithTrigger,
     side,
@@ -121,26 +108,19 @@ function selectContentProps({
     alignItemWithTrigger,
     className: cn(
       "max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-2xl bg-popover text-popover-foreground shadow-lg ring-1 ring-foreground/5 transition-[opacity,scale,translate] duration-100 data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 data-[align-trigger=true]:transition-none data-[side=bottom]:data-starting-style:-translate-y-2 data-[side=end]:data-starting-style:-translate-x-2 data-[side=left]:data-starting-style:translate-x-2 data-[side=right]:data-starting-style:-translate-x-2 data-[side=start]:data-starting-style:translate-x-2 data-[side=top]:data-starting-style:translate-y-2 motion-reduce:transition-none rtl:data-[side=end]:data-starting-style:translate-x-2 rtl:data-[side=start]:data-starting-style:-translate-x-2 dark:ring-foreground/10",
+      // ui-sdk slides a sheet with `translate`, so a transition here would lag the drag.
+      "data-[presentation=sheet]:max-h-[85dvh] data-[presentation=sheet]:w-full data-[presentation=sheet]:rounded-b-none data-[presentation=sheet]:pb-[env(safe-area-inset-bottom)] data-[presentation=sheet]:transition-none data-[presentation=sheet]:data-ending-style:scale-100 data-[presentation=sheet]:data-ending-style:opacity-100 data-[presentation=sheet]:data-starting-style:scale-100 data-[presentation=sheet]:data-starting-style:opacity-100",
       className,
     ),
     ...props,
   }
 }
 
-function SelectContent(
-  props: Omit<React.ComponentProps<typeof SelectContentPrimitive>, "className"> & {
-    className?: string
-  },
-) {
+function SelectContent(props: PrimitiveProps<typeof SelectContentPrimitive>) {
   return <SelectContentPrimitive {...selectContentProps(props)} />
 }
 
-function SelectLabel({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectGroupLabelPrimitive>, "className"> & {
-  className?: string
-}) {
+function SelectLabel({ className, ...props }: PrimitiveProps<typeof SelectGroupLabelPrimitive>) {
   return (
     <SelectGroupLabelPrimitive
       className={cn("px-2 py-1 text-xs text-muted-foreground", className)}
@@ -153,13 +133,11 @@ function SelectItem({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof SelectItemPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof SelectItemPrimitive>>) {
   return (
     <SelectItemPrimitive
       className={cn(
-        "relative flex min-h-7 w-full cursor-default items-center gap-2 rounded-xl py-1.5 pr-8 pl-2 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
+        "relative flex min-h-7 w-full cursor-default items-center gap-2 rounded-xl py-1.5 ps-2 pe-8 text-sm outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground not-data-[variant=destructive]:data-highlighted:**:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4 *:[span]:last:flex *:[span]:last:items-center *:[span]:last:gap-2",
         className,
       )}
       {...props}
@@ -167,19 +145,14 @@ function SelectItem({
       <SelectItemTextPrimitive className="flex flex-1 shrink-0 gap-2 whitespace-nowrap">
         {children}
       </SelectItemTextPrimitive>
-      <SelectItemIndicatorPrimitive className="pointer-events-none absolute right-2 flex size-4 items-center justify-center">
+      <SelectItemIndicatorPrimitive className="pointer-events-none absolute end-2 flex size-4 items-center justify-center">
         <CheckIcon className="pointer-events-none" />
       </SelectItemIndicatorPrimitive>
     </SelectItemPrimitive>
   )
 }
 
-function SelectSeparator({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectSeparatorPrimitive>, "className"> & {
-  className?: string
-}) {
+function SelectSeparator({ className, ...props }: PrimitiveProps<typeof SelectSeparatorPrimitive>) {
   return (
     <SelectSeparatorPrimitive
       className={cn("pointer-events-none -mx-1 my-1 h-px bg-border", className)}
@@ -188,10 +161,7 @@ function SelectSeparator({
   )
 }
 
-function SelectInput({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectInputPrimitive>, "className"> & { className?: string }) {
+function SelectInput({ className, ...props }: PrimitiveProps<typeof SelectInputPrimitive>) {
   return (
     <div
       data-slot="select-input-wrapper"
@@ -209,10 +179,7 @@ function SelectInput({
   )
 }
 
-function SelectList({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectListPrimitive>, "className"> & { className?: string }) {
+function SelectList({ className, ...props }: PrimitiveProps<typeof SelectListPrimitive>) {
   return (
     <SelectListPrimitive
       className={cn("scroll-py-1 p-1 outline-none aria-busy:opacity-60", className)}
@@ -221,10 +188,7 @@ function SelectList({
   )
 }
 
-function SelectEmpty({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectEmptyPrimitive>, "className"> & { className?: string }) {
+function SelectEmpty({ className, ...props }: PrimitiveProps<typeof SelectEmptyPrimitive>) {
   return (
     <SelectEmptyPrimitive
       className={cn("py-6 text-center text-sm text-muted-foreground", className)}
@@ -233,10 +197,7 @@ function SelectEmpty({
   )
 }
 
-function SelectStatus({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectStatusPrimitive>, "className"> & { className?: string }) {
+function SelectStatus({ className, ...props }: PrimitiveProps<typeof SelectStatusPrimitive>) {
   return (
     <SelectStatusPrimitive
       className={cn("px-2 py-1.5 text-xs text-muted-foreground empty:hidden", className)}
@@ -249,9 +210,7 @@ function SelectClear({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof SelectClearPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof SelectClearPrimitive>>) {
   return (
     <SelectClearPrimitive
       aria-label="Clear"
@@ -270,13 +229,11 @@ function SelectSelectAll({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof SelectSelectAllPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof SelectSelectAllPrimitive>>) {
   return (
     <SelectSelectAllPrimitive
       className={cn(
-        "group/select-all relative flex min-h-7 w-full cursor-default items-center gap-2 rounded-xl py-1.5 pr-8 pl-2 text-sm font-medium outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
+        "group/select-all relative flex min-h-7 w-full cursor-default items-center gap-2 rounded-xl py-1.5 ps-2 pe-8 text-sm font-medium outline-hidden select-none data-highlighted:bg-accent data-highlighted:text-accent-foreground data-disabled:pointer-events-none data-disabled:opacity-50",
         className,
       )}
       {...props}
@@ -284,18 +241,13 @@ function SelectSelectAll({
       {children ?? "Select all"}
       <CheckIcon
         aria-hidden="true"
-        className="pointer-events-none absolute right-2 size-4 group-data-unchecked/select-all:hidden"
+        className="pointer-events-none absolute end-2 size-4 group-data-unchecked/select-all:hidden"
       />
     </SelectSelectAllPrimitive>
   )
 }
 
-function SelectItemIcon({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SelectItemIconPrimitive>, "className"> & {
-  className?: string
-}) {
+function SelectItemIcon({ className, ...props }: PrimitiveProps<typeof SelectItemIconPrimitive>) {
   return (
     <SelectItemIconPrimitive
       className={cn("flex size-4 shrink-0 text-muted-foreground", className)}
@@ -324,7 +276,12 @@ function SelectItems({ items }: { items: ListData<unknown> }) {
       )
     }
     return (
-      <SelectItem key={index} value={item.value} disabled={item.disabled} label={item.label}>
+      <SelectItem
+        key={typeof item.value === "string" ? item.value : index}
+        value={item.value}
+        disabled={item.disabled}
+        label={item.label}
+      >
         {item.label}
       </SelectItem>
     )

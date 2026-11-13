@@ -16,7 +16,7 @@ export function StateMatrix<Row extends string>({
   className?: string
 }) {
   return (
-    <div className={cn("w-full overflow-x-auto", className)}>
+    <div data-agent-hidden className={cn("w-full overflow-x-auto", className)}>
       <table className="w-full border-separate border-spacing-x-2 border-spacing-y-3">
         <thead>
           <tr>
@@ -25,7 +25,7 @@ export function StateMatrix<Row extends string>({
               <th
                 key={state}
                 scope="col"
-                className="text-left font-mono text-xs font-normal text-muted-foreground"
+                className="text-start font-mono text-xs font-normal text-muted-foreground"
               >
                 {state}
               </th>
@@ -37,7 +37,7 @@ export function StateMatrix<Row extends string>({
             <tr key={row}>
               <th
                 scope="row"
-                className="pr-4 text-left font-mono text-xs font-normal text-muted-foreground"
+                className="pe-4 text-start font-mono text-xs font-normal text-muted-foreground"
               >
                 {row}
               </th>

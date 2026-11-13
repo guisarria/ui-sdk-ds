@@ -119,8 +119,7 @@ function ReleaseNotesForm() {
             type="email"
             placeholder="name@example.com"
             value={email}
-            aria-invalid={error ? true : undefined}
-            onChange={(event) => setEmail(event.target.value)}
+            onValueChange={setEmail}
           />
           <Button type="submit" variant="outline">
             Subscribe

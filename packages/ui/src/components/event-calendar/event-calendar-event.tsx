@@ -1,7 +1,7 @@
 "use client"
 
 import type * as React from "react"
-import { createContext, useContext, useMemo, type CSSProperties, type ReactNode } from "react"
+import { createContext, use, useMemo, type CSSProperties, type ReactNode } from "react"
 import {
   useEventCalendar,
   useEventCalendarSelector,
@@ -74,7 +74,7 @@ interface EventCalendarChipContextValue<TData = unknown> {
 const EventCalendarChipContext = createContext<EventCalendarChipContextValue | null>(null)
 
 function useEventCalendarEventChip<TData = unknown>(): EventCalendarChipContextValue<TData> {
-  const ctx = useContext(EventCalendarChipContext)
+  const ctx = use(EventCalendarChipContext)
   if (!ctx) {
     throw new Error("useEventCalendarEventChip must be used within <EventCalendarEvent>")
   }
@@ -392,7 +392,7 @@ function EventCalendarEvent<TData = unknown>({
   ) as React.ReactElement<Record<string, unknown>>
 
   return (
-    <EventCalendarChipContext.Provider value={{ occurrence, segment, isDragging, isSelected }}>
+    <EventCalendarChipContext value={{ occurrence, segment, isDragging, isSelected }}>
       {tooltipOn ? (
         <Tooltip delay={tooltipOpts?.delay ?? 600}>
           <TooltipTrigger render={chip} />
@@ -406,7 +406,7 @@ function EventCalendarEvent<TData = unknown>({
       ) : (
         chip
       )}
-    </EventCalendarChipContext.Provider>
+    </EventCalendarChipContext>
   )
 }
 

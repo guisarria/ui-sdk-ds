@@ -277,7 +277,14 @@ function EventCalendarTimeGrid({
                 {track}
               </div>
             ) : (
-              <ScrollArea className="h-full">{track}</ScrollArea>
+              <ScrollArea
+                aria-label={settings.i18n.functions.formatDayRange(visibleRange, {
+                  locale: settings.locale,
+                })}
+                className="h-full"
+              >
+                {track}
+              </ScrollArea>
             )}
           </div>
         ) : (
@@ -288,9 +295,9 @@ function EventCalendarTimeGrid({
   }
 
   return (
-    <EventCalendarViewContext.Provider value={{ view }}>
+    <EventCalendarViewContext value={view}>
       {renderElement("div", mergeProps(defaultProps, props), render)}
-    </EventCalendarViewContext.Provider>
+    </EventCalendarViewContext>
   )
 }
 

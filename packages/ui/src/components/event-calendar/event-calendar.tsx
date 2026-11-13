@@ -3,7 +3,7 @@
 import {
   createContext,
   useCallback,
-  useContext,
+  use,
   useEffect,
   useLayoutEffect,
   useRef,
@@ -849,7 +849,7 @@ function useEventCalendarState<TData = unknown>(
 const EventCalendarContext = createContext<EventCalendarInstance | null>(null)
 
 function useEventCalendar<TData = unknown>(): EventCalendarInstance<TData> {
-  const instance = useContext(EventCalendarContext)
+  const instance = use(EventCalendarContext)
   if (!instance) {
     throw new Error("useEventCalendar must be used within <EventCalendar>")
   }
@@ -865,7 +865,7 @@ function useEventCalendarSelector<TData = unknown, TSelected = unknown>(
   selector: (state: EventCalendarState<TData>) => TSelected,
   options?: UseEventCalendarSelectorOptions<TData, TSelected>,
 ): TSelected {
-  const contextInstance = useContext(EventCalendarContext)
+  const contextInstance = use(EventCalendarContext)
   const instance = options?.calendar ?? contextInstance
   if (!instance) {
     throw new Error(
@@ -1196,7 +1196,7 @@ function useEventCalendarSettings<TData = unknown>(): EventCalendarSettings<TDat
   return instance.settings
 }
 
-const EventCalendarViewContext = createContext<{ view: CalendarView } | null>(null)
+const EventCalendarViewContext = createContext<CalendarView | null>(null)
 
 interface EventCalendarClassNames {
   nav?: string
@@ -1390,7 +1390,7 @@ const DEFAULT_VIEW_CONFIG: EventCalendarViewConfig = {
 const EventCalendarViewConfigContext = createContext<EventCalendarViewConfig>(DEFAULT_VIEW_CONFIG)
 
 function useEventCalendarViewConfig<TData = unknown>(): EventCalendarViewConfig<TData> {
-  return useContext(EventCalendarViewConfigContext)
+  return use(EventCalendarViewConfigContext)
 }
 
 const VIEW_CONFIG_KEYS: Array<keyof EventCalendarViewConfig> = [
@@ -1438,12 +1438,12 @@ const VIEW_CONFIG_KEYS: Array<keyof EventCalendarViewConfig> = [
   "agendaSummaryMaxDots",
 ]
 
-function useEventCalendarViewContext(): { view: CalendarView } {
-  const ctx = useContext(EventCalendarViewContext)
-  if (!ctx) {
+function useEventCalendarViewContext() {
+  const view = use(EventCalendarViewContext)
+  if (!view) {
     throw new Error("useEventCalendarViewContext must be used inside a calendar view")
   }
-  return ctx
+  return { view }
 }
 
 interface EventCalendarProps<TData = unknown>
@@ -1577,11 +1577,11 @@ function EventCalendar<TData = unknown>({
   }
 
   return (
-    <EventCalendarContext.Provider value={instance as EventCalendarInstance}>
-      <EventCalendarViewConfigContext.Provider value={viewConfig as EventCalendarViewConfig}>
+    <EventCalendarContext value={instance as EventCalendarInstance}>
+      <EventCalendarViewConfigContext value={viewConfig as EventCalendarViewConfig}>
         {renderElement("div", mergeProps(defaultProps, rest), render)}
-      </EventCalendarViewConfigContext.Provider>
-    </EventCalendarContext.Provider>
+      </EventCalendarViewConfigContext>
+    </EventCalendarContext>
   )
 }
 

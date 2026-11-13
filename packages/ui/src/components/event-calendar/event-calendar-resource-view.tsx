@@ -267,7 +267,9 @@ function EventCalendarResourceView({
                 {track}
               </div>
             ) : (
-              <ScrollArea className="h-full">{track}</ScrollArea>
+              <ScrollArea aria-label={settings.i18n.labels.resources} className="h-full">
+                {track}
+              </ScrollArea>
             )}
           </div>
         ) : (
@@ -278,9 +280,9 @@ function EventCalendarResourceView({
   }
 
   return (
-    <EventCalendarViewContext.Provider value={{ view: "resource" }}>
+    <EventCalendarViewContext value="resource">
       {renderElement("div", mergeProps(defaultProps, props), render)}
-    </EventCalendarViewContext.Provider>
+    </EventCalendarViewContext>
   )
 }
 

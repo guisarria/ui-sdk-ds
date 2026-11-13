@@ -40,7 +40,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@ui-sdk-ds/ui/components/dropdown-menu"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@ui-sdk-ds/ui/components/input-group"
+import { Input, InputGroup, InputGroupAddon } from "@ui-sdk-ds/ui/components/input"
 import { Kbd, KbdGroup } from "@ui-sdk-ds/ui/components/kbd"
 import { Spinner } from "@ui-sdk-ds/ui/components/spinner"
 import { Toggle } from "@ui-sdk-ds/ui/components/toggle"
@@ -239,7 +239,7 @@ function ButtonGroupBlock() {
         <ButtonGroup className="w-full max-w-sm">
           <ButtonGroupText>https://</ButtonGroupText>
           <InputGroup>
-            <InputGroupInput name="subdomain" aria-label="Subdomain" defaultValue="dashboard" />
+            <Input name="subdomain" aria-label="Subdomain" defaultValue="dashboard" />
             <InputGroupAddon align="inline-end">.example.com</InputGroupAddon>
           </InputGroup>
         </ButtonGroup>
@@ -543,7 +543,7 @@ function KbdBlock() {
           </TooltipContent>
         </Tooltip>
         <InputGroup className="max-w-48">
-          <InputGroupInput name="search" aria-label="Search" placeholder="Search…" />
+          <Input name="search" aria-label="Search" placeholder="Search…" />
           <InputGroupAddon align="inline-end">
             <Kbd>⌘K</Kbd>
           </InputGroupAddon>

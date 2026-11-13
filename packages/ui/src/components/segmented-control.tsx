@@ -8,15 +8,13 @@ import {
 } from "@ui-sdk/react/segmented-control"
 import { cn } from "cn"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function SegmentedControl({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof SegmentedControlPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof SegmentedControlPrimitive>>) {
   return (
     <SegmentedControlPrimitive
       className={cn(
@@ -34,9 +32,7 @@ function SegmentedControl({
 function SegmentedControlIndicator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof SegmentedControlIndicatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof SegmentedControlIndicatorPrimitive>) {
   return (
     <SegmentedControlIndicatorPrimitive
       className={cn(
@@ -51,9 +47,7 @@ function SegmentedControlIndicator({
 function SegmentedControlItem({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof SegmentedControlItemPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof SegmentedControlItemPrimitive>) {
   return (
     <SegmentedControlItemPrimitive
       className={cn(

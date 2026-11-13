@@ -17,7 +17,7 @@ import {
   CardTitle,
 } from "@ui-sdk-ds/ui/components/card"
 import { Field, FieldDescription, FieldError, FieldLabel } from "@ui-sdk-ds/ui/components/field"
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@ui-sdk-ds/ui/components/input-group"
+import { Input, InputGroup, InputGroupAddon } from "@ui-sdk-ds/ui/components/input"
 import {
   Item,
   ItemActions,
@@ -133,12 +133,11 @@ function InviteCard() {
                 <InputGroupAddon>
                   <MailIcon />
                 </InputGroupAddon>
-                <InputGroupInput
+                <Input
                   type="email"
                   placeholder="name@example.com"
                   value={email}
-                  aria-invalid={error ? true : undefined}
-                  onChange={(event) => setEmail(event.target.value)}
+                  onValueChange={setEmail}
                 />
               </InputGroup>
               <Select
@@ -171,7 +170,7 @@ function InviteCard() {
           {members.slice(0, 3).map((member, index) => (
             <Item key={member.email} size="xs" className="px-0">
               <ItemMedia>
-                <Avatar>
+                <Avatar aria-hidden="true">
                   <AvatarImage src={avatarSrc(index * 70 + 200)} alt="" />
                   <AvatarFallback>{member.initials}</AvatarFallback>
                 </Avatar>

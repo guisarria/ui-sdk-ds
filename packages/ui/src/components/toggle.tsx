@@ -3,6 +3,7 @@
 import * as React from "react"
 import { Toggle as TogglePrimitive } from "@ui-sdk/react/toggle"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 const variants = {
   default: "bg-transparent",
@@ -10,9 +11,9 @@ const variants = {
 }
 
 const sizes = {
-  default: "h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-  sm: "h-7 min-w-7 px-2.5 has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5",
-  lg: "h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
+  default: "h-8 min-w-8 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
+  sm: "h-7 min-w-7 px-2.5 has-data-[icon=inline-end]:pe-1.5 has-data-[icon=inline-start]:ps-1.5",
+  lg: "h-9 min-w-9 px-2.5 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
 }
 
 type ToggleVariants = {
@@ -33,9 +34,7 @@ function Toggle({
   variant = "default",
   size = "default",
   ...props
-}: Omit<React.ComponentProps<typeof TogglePrimitive>, "className"> & {
-  className?: string
-} & ToggleVariants) {
+}: PrimitiveProps<typeof TogglePrimitive> & ToggleVariants) {
   return (
     <TogglePrimitive
       data-variant={variant}

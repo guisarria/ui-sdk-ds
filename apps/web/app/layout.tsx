@@ -1,7 +1,8 @@
 import { Geist, Geist_Mono } from "next/font/google"
 
 import "@ui-sdk-ds/ui/globals.css"
-import { Toaster } from "@ui-sdk-ds/ui/components/toast"
+import { OverlayHost } from "@ui-sdk-ds/ui/components/overlays"
+import { AgentTools } from "@/components/agent-tools"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@ui-sdk-ds/ui/lib/utils"
 
@@ -25,7 +26,9 @@ export default function RootLayout({
     >
       <body>
         <ThemeProvider>
-          <Toaster>{children}</Toaster>
+          {children}
+          <OverlayHost />
+          <AgentTools />
         </ThemeProvider>
       </body>
     </html>

@@ -129,13 +129,12 @@ function EventCalendarAgendaView({ className, render, ...props }: EventCalendarA
       </div>
     )
 
+  const label = settings.i18n.functions.formatDayRange(visibleRange, { locale: settings.locale })
   const defaultProps = {
     "data-slot": "event-calendar-agenda-view",
     "data-view": "agenda",
     role: "group",
-    "aria-label": settings.i18n.functions.formatDayRange(visibleRange, {
-      locale: settings.locale,
-    }),
+    "aria-label": label,
     className: cn(
       "flex min-h-0 flex-1 flex-col overflow-hidden border-t",
       viewConfig.classNames?.agendaView,
@@ -150,14 +149,16 @@ function EventCalendarAgendaView({ className, render, ...props }: EventCalendarA
         {body}
       </div>
     ) : (
-      <ScrollArea className="h-full">{body}</ScrollArea>
+      <ScrollArea aria-label={label} className="h-full">
+        {body}
+      </ScrollArea>
     ),
   }
 
   return (
-    <EventCalendarViewContext.Provider value={{ view: "agenda" }}>
+    <EventCalendarViewContext value="agenda">
       {renderElement("div", mergeProps(defaultProps, props), render)}
-    </EventCalendarViewContext.Provider>
+    </EventCalendarViewContext>
   )
 }
 

@@ -14,7 +14,7 @@ import {
 import { cn } from "cn"
 import { CheckIcon } from "lucide-react"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function Listbox({ className, ...props }: ListboxProps & { className?: string }) {
   return (
@@ -32,9 +32,7 @@ function ListboxItem({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ListboxItemPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ListboxItemPrimitive>>) {
   return (
     <ListboxItemPrimitive
       className={cn(
@@ -53,11 +51,7 @@ function ListboxItemIndicator({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ListboxItemIndicatorPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ListboxItemIndicatorPrimitive>>) {
   return (
     <ListboxItemIndicatorPrimitive
       className={cn("absolute inset-e-2 flex size-4 items-center justify-center", className)}
@@ -68,12 +62,7 @@ function ListboxItemIndicator({
   )
 }
 
-function ListboxItemIcon({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ListboxItemIconPrimitive>, "className"> & {
-  className?: string
-}) {
+function ListboxItemIcon({ className, ...props }: PrimitiveProps<typeof ListboxItemIconPrimitive>) {
   return (
     <ListboxItemIconPrimitive
       className={cn("flex size-4 shrink-0 text-muted-foreground", className)}
@@ -82,19 +71,14 @@ function ListboxItemIcon({
   )
 }
 
-function ListboxGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ListboxGroupPrimitive>, "className"> & { className?: string }) {
+function ListboxGroup({ className, ...props }: PrimitiveProps<typeof ListboxGroupPrimitive>) {
   return <ListboxGroupPrimitive className={cn(className)} {...props} />
 }
 
 function ListboxGroupLabel({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ListboxGroupLabelPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ListboxGroupLabelPrimitive>) {
   return (
     <ListboxGroupLabelPrimitive
       className={cn("px-2 py-1.5 text-xs text-muted-foreground", className)}
@@ -106,9 +90,7 @@ function ListboxGroupLabel({
 function ListboxSeparator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ListboxSeparatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ListboxSeparatorPrimitive>) {
   return (
     <ListboxSeparatorPrimitive className={cn("-mx-1 my-1 h-px bg-border", className)} {...props} />
   )

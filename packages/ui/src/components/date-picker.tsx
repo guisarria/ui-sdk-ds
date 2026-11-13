@@ -28,7 +28,8 @@ import {
   calendarWeekdayClassName,
   navButtonClassName,
 } from "@ui-sdk-ds/ui/components/calendar"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren, RenderProps } from "@ui-sdk-ds/ui/lib/parts"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
 
 const iconButtonClassName = cn(
   buttonVariants({ variant: "ghost", size: "icon-xs" }),
@@ -61,25 +62,24 @@ function DatePicker({
   )
 }
 
-function DatePickerGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="date-picker-group"
-      className={cn(
-        "flex h-8 w-full min-w-0 items-center gap-1 rounded-2xl border border-transparent bg-input/50 ps-2.5 pe-1 transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 has-data-invalid:border-destructive has-data-invalid:ring-3 has-data-invalid:ring-destructive/20 has-data-disabled:opacity-50 dark:has-data-invalid:border-destructive/50 dark:has-data-invalid:ring-destructive/40",
-        className,
-      )}
-      {...props}
-    />
+function DatePickerGroup({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "date-picker-group",
+        className: cn(
+          "flex h-8 w-full min-w-0 items-center gap-1 rounded-2xl border border-transparent bg-input/50 ps-2.5 pe-1 transition-[color,box-shadow] duration-200 focus-within:border-ring focus-within:ring-3 focus-within:ring-ring/30 has-data-invalid:border-destructive has-data-invalid:ring-3 has-data-invalid:ring-destructive/20 has-data-disabled:opacity-50 dark:has-data-invalid:border-destructive/50 dark:has-data-invalid:ring-destructive/40",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function DatePickerInput({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DatePickerInputPrimitive>, "className"> & {
-  className?: string
-}) {
+function DatePickerInput({ className, ...props }: PrimitiveProps<typeof DatePickerInputPrimitive>) {
   return (
     <DatePickerInputPrimitive
       className={cn(
@@ -95,11 +95,7 @@ function DatePickerTrigger({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof DatePickerTriggerPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof DatePickerTriggerPrimitive>>) {
   return (
     <DatePickerTriggerPrimitive
       aria-label="Choose date"
@@ -115,9 +111,7 @@ function DatePickerClear({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof DatePickerClearPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof DatePickerClearPrimitive>>) {
   return (
     <DatePickerClearPrimitive
       aria-label="Clear date"
@@ -129,12 +123,7 @@ function DatePickerClear({
   )
 }
 
-function DatePickerHint({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DatePickerHintPrimitive>, "className"> & {
-  className?: string
-}) {
+function DatePickerHint({ className, ...props }: PrimitiveProps<typeof DatePickerHintPrimitive>) {
   return (
     <DatePickerHintPrimitive
       className={cn("text-sm text-muted-foreground", className)}
@@ -146,9 +135,7 @@ function DatePickerHint({
 function DatePickerPreset({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof DatePickerPresetPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof DatePickerPresetPrimitive>) {
   return (
     <DatePickerPresetPrimitive
       className={cn(
@@ -197,11 +184,7 @@ function DatePickerContent({
   sideOffset = 6,
   align = "start",
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof DatePickerContentPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof DatePickerContentPrimitive>>) {
   return (
     <DatePickerContentPrimitive
       sideOffset={sideOffset}

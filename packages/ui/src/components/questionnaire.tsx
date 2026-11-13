@@ -6,6 +6,8 @@ import { cn } from "cn"
 
 import { buttonVariants, type Button } from "@ui-sdk-ds/ui/components/button"
 import { CheckIcon } from "lucide-react"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
+import type { RenderProps } from "@ui-sdk-ds/ui/lib/parts"
 
 function Questionnaire({
   className,
@@ -138,13 +140,17 @@ function QuestionnaireChoice({
   )
 }
 
-function QuestionnaireChoiceDescription({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      data-slot="questionnaire-choice-description"
-      className={cn("text-muted-foreground", className)}
-      {...props}
-    />
+function QuestionnaireChoiceDescription({ className, render, ...props }: RenderProps<"span">) {
+  return renderElement(
+    "span",
+    mergeProps(
+      {
+        "data-slot": "questionnaire-choice-description",
+        className: cn("text-muted-foreground", className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
@@ -183,16 +189,20 @@ function QuestionnaireError({
   )
 }
 
-function QuestionnaireActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="questionnaire-actions"
-      className={cn(
-        "grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 sm:min-h-8",
-        className,
-      )}
-      {...props}
-    />
+function QuestionnaireActions({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "questionnaire-actions",
+        className: cn(
+          "grid min-h-11 w-full grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-2 sm:min-h-8",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 

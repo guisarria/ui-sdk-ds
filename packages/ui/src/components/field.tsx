@@ -1,7 +1,6 @@
 "use client"
 
 import type * as React from "react"
-import { useMemo } from "react"
 import {
   Field as FieldPrimitive,
   FieldDescription as FieldDescriptionPrimitive,
@@ -15,11 +14,10 @@ import { cn } from "cn"
 
 import { labelClassName } from "@ui-sdk-ds/ui/components/label"
 import { Separator } from "@ui-sdk-ds/ui/components/separator"
+import type { PrimitiveProps, RenderProps } from "@ui-sdk-ds/ui/lib/parts"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
 
-function FieldSet({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof FieldSetPrimitive>, "className"> & { className?: string }) {
+function FieldSet({ className, ...props }: PrimitiveProps<typeof FieldSetPrimitive>) {
   return (
     <FieldSetPrimitive
       className={cn(
@@ -35,7 +33,7 @@ function FieldLegend({
   className,
   variant = "legend",
   ...props
-}: Omit<React.ComponentProps<typeof FieldLegendPrimitive>, "className"> & { className?: string } & {
+}: PrimitiveProps<typeof FieldLegendPrimitive> & {
   variant?: "legend" | "label"
 }) {
   return (
@@ -50,10 +48,7 @@ function FieldLegend({
   )
 }
 
-function FieldGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof FieldGroupPrimitive>, "className"> & { className?: string }) {
+function FieldGroup({ className, ...props }: PrimitiveProps<typeof FieldGroupPrimitive>) {
   return (
     <FieldGroupPrimitive
       className={cn(
@@ -88,12 +83,9 @@ function Field({
   className,
   orientation = "vertical",
   ...props
-}: Omit<React.ComponentProps<typeof FieldPrimitive>, "className"> & {
-  className?: string
-} & FieldVariants) {
+}: PrimitiveProps<typeof FieldPrimitive> & FieldVariants) {
   return (
     <FieldPrimitive
-      role="group"
       data-orientation={orientation}
       className={cn(fieldVariants({ orientation }), className)}
       {...props}
@@ -101,20 +93,21 @@ function Field({
   )
 }
 
-function FieldContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="field-content"
-      className={cn("group/field-content flex flex-1 flex-col gap-1 leading-snug", className)}
-      {...props}
-    />
+function FieldContent({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "field-content",
+        className: cn("group/field-content flex flex-1 flex-col gap-1 leading-snug", className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function FieldLabel({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof FieldLabelPrimitive>, "className"> & { className?: string }) {
+function FieldLabel({ className, ...props }: PrimitiveProps<typeof FieldLabelPrimitive>) {
   return (
     <FieldLabelPrimitive
       className={cn(
@@ -128,29 +121,31 @@ function FieldLabel({
   )
 }
 
-function FieldTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="field-label"
-      className={cn(
-        "flex w-fit items-center gap-2 text-sm font-medium group-data-disabled/field:opacity-50",
-        className,
-      )}
-      {...props}
-    />
+function FieldTitle({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "field-label",
+        className: cn(
+          "flex w-fit items-center gap-2 text-sm font-medium group-data-disabled/field:opacity-50",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
 function FieldDescription({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof FieldDescriptionPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof FieldDescriptionPrimitive>) {
   return (
     <FieldDescriptionPrimitive
       className={cn(
-        "text-left text-sm/normal font-normal text-muted-foreground group-has-data-horizontal/field:text-balance [[data-variant=legend]+&]:-mt-1.5",
+        "text-start text-sm/normal font-normal text-muted-foreground group-has-data-horizontal/field:text-balance [[data-variant=legend]+&]:-mt-1.5",
         "last:mt-0 nth-last-2:-mt-1",
         "[&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
         className,
@@ -190,49 +185,36 @@ function FieldSeparator({
   )
 }
 
+function errorMessages(errors: Array<{ message?: string } | undefined> = []) {
+  const messages = [...new Set(errors.flatMap((error) => (error?.message ? [error.message] : [])))]
+
+  if (messages.length < 2) {
+    return messages[0]
+  }
+
+  return (
+    <ul className="ms-4 flex list-disc flex-col gap-1">
+      {messages.map((message) => (
+        <li key={message}>{message}</li>
+      ))}
+    </ul>
+  )
+}
+
 function FieldError({
   className,
   children,
   errors,
   ...props
-}: Omit<React.ComponentProps<typeof FieldErrorPrimitive>, "className"> & { className?: string } & {
+}: PrimitiveProps<typeof FieldErrorPrimitive> & {
   errors?: Array<{ message?: string } | undefined>
 }) {
-  const content = useMemo(() => {
-    if (children) {
-      return children
-    }
-
-    if (!errors?.length) {
-      return null
-    }
-
-    const uniqueErrors = [...new Map(errors.map((error) => [error?.message, error])).values()]
-
-    if (uniqueErrors?.length === 1) {
-      return uniqueErrors[0]?.message
-    }
-
-    return (
-      <ul className="ml-4 flex list-disc flex-col gap-1">
-        {uniqueErrors.map(
-          (error) => error?.message && <li key={error.message}>{error.message}</li>,
-        )}
-      </ul>
-    )
-  }, [children, errors])
-
-  if (!content) {
-    return null
-  }
-
   return (
     <FieldErrorPrimitive
-      role="alert"
-      className={cn("text-sm font-normal text-destructive", className)}
+      className={cn("text-sm font-normal text-destructive empty:hidden", className)}
       {...props}
     >
-      {content}
+      {children ?? errorMessages(errors)}
     </FieldErrorPrimitive>
   )
 }

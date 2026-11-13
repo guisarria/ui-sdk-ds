@@ -8,11 +8,9 @@ import {
 } from "@ui-sdk/react/checkbox"
 import { cn } from "cn"
 import { CheckIcon } from "lucide-react"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
-function Checkbox({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CheckboxPrimitive>, "className"> & { className?: string }) {
+function Checkbox({ className, ...props }: PrimitiveProps<typeof CheckboxPrimitive>) {
   return (
     <CheckboxPrimitive
       className={cn(
@@ -28,12 +26,7 @@ function Checkbox({
   )
 }
 
-function CheckboxGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CheckboxGroupPrimitive>, "className"> & {
-  className?: string
-}) {
+function CheckboxGroup({ className, ...props }: PrimitiveProps<typeof CheckboxGroupPrimitive>) {
   return (
     <CheckboxGroupPrimitive
       className={cn("flex flex-col gap-3 data-disabled:opacity-50", className)}

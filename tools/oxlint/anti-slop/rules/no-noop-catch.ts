@@ -21,20 +21,22 @@ function isNoopFunction(node: Argument | ESTree.Node): boolean {
     return node.body !== null && isNoopBlock(node.body);
   }
   if (node.type !== "ArrowFunctionExpression") return false;
-  return node.body.type === "BlockStatement"
-    ? isNoopBlock(node.body)
-    : isUndefinedValue(node.body);
+  return node.body.type === "BlockStatement" ? isNoopBlock(node.body) : isUndefinedValue(node.body);
 }
 
 /** Follows a local binding, so `const ignore = () => {}` reads like the literal handler. */
-function bindsNoopFunction(sourceCode: SourceCode, identifier: ESTree.IdentifierReference): boolean {
+function bindsNoopFunction(
+  sourceCode: SourceCode,
+  identifier: ESTree.IdentifierReference,
+): boolean {
   let scope: Scope | null = sourceCode.getScope(identifier);
   while (scope !== null) {
     const variable = scope.set.get(identifier.name);
     if (variable !== undefined) {
       return variable.defs.some((definition) => {
         const node = definition.node;
-        if (node.type === "VariableDeclarator") return node.init !== null && isNoopFunction(node.init);
+        if (node.type === "VariableDeclarator")
+          return node.init !== null && isNoopFunction(node.init);
         return isNoopFunction(node);
       });
     }
@@ -78,7 +80,11 @@ export const noNoopCatchRule = defineRule({
       CallExpression(node) {
         const method = calledMethod(node.callee);
         const handler =
-          method === "catch" ? node.arguments[0] : method === "then" ? node.arguments[1] : undefined;
+          method === "catch"
+            ? node.arguments[0]
+            : method === "then"
+              ? node.arguments[1]
+              : undefined;
         if (isNoopHandler(context.sourceCode, handler)) {
           context.report({ node, messageId: "noopCatch" });
         }

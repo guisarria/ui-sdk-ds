@@ -10,16 +10,14 @@ import {
 } from "@ui-sdk/react/progress"
 import { cn } from "cn"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function Progress({
   className,
   children,
   value,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ProgressPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ProgressPrimitive>>) {
   return (
     <ProgressPrimitive value={value} className={cn("flex flex-wrap gap-3", className)} {...props}>
       {children}
@@ -30,12 +28,7 @@ function Progress({
   )
 }
 
-function ProgressTrack({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ProgressTrackPrimitive>, "className"> & {
-  className?: string
-}) {
+function ProgressTrack({ className, ...props }: PrimitiveProps<typeof ProgressTrackPrimitive>) {
   return (
     <ProgressTrackPrimitive
       className={cn(
@@ -50,9 +43,7 @@ function ProgressTrack({
 function ProgressIndicator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ProgressIndicatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ProgressIndicatorPrimitive>) {
   return (
     <ProgressIndicatorPrimitive
       className={cn("h-full bg-primary transition-all", className)}
@@ -61,24 +52,14 @@ function ProgressIndicator({
   )
 }
 
-function ProgressLabel({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ProgressLabelPrimitive>, "className"> & {
-  className?: string
-}) {
+function ProgressLabel({ className, ...props }: PrimitiveProps<typeof ProgressLabelPrimitive>) {
   return <ProgressLabelPrimitive className={cn("text-sm font-medium", className)} {...props} />
 }
 
-function ProgressValue({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ProgressValuePrimitive>, "className"> & {
-  className?: string
-}) {
+function ProgressValue({ className, ...props }: PrimitiveProps<typeof ProgressValuePrimitive>) {
   return (
     <ProgressValuePrimitive
-      className={cn("ml-auto text-sm text-muted-foreground tabular-nums", className)}
+      className={cn("ms-auto text-sm text-muted-foreground tabular-nums", className)}
       {...props}
     />
   )

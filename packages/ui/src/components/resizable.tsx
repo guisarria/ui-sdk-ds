@@ -6,11 +6,9 @@ import {
   ResizableHandle as ResizableHandlePrimitive,
 } from "@ui-sdk/react/resizable"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
-function ResizablePanelGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ResizablePrimitive>, "className"> & { className?: string }) {
+function ResizablePanelGroup({ className, ...props }: PrimitiveProps<typeof ResizablePrimitive>) {
   return (
     <ResizablePrimitive
       className={cn("flex size-full data-[orientation=vertical]:flex-col", className)}
@@ -23,17 +21,14 @@ function ResizableHandle({
   withHandle,
   className,
   ...props
-}: Omit<
-  Omit<React.ComponentProps<typeof ResizableHandlePrimitive>, "className"> & { className?: string },
-  "children"
-> & {
+}: Omit<PrimitiveProps<typeof ResizableHandlePrimitive>, "children"> & {
   withHandle?: boolean
 }) {
   return (
     <ResizableHandlePrimitive
       aria-label="Resize"
       className={cn(
-        "relative flex w-px items-center justify-center bg-border ring-offset-background after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-dragging:bg-ring data-hovering:bg-ring data-[orientation=vertical]:h-px data-[orientation=vertical]:w-full data-[orientation=vertical]:*:rotate-90 data-[orientation=vertical]:after:left-0 data-[orientation=vertical]:after:h-1 data-[orientation=vertical]:after:w-full data-[orientation=vertical]:after:translate-x-0 data-[orientation=vertical]:after:-translate-y-1/2",
+        "relative flex w-px items-center justify-center bg-border ring-offset-background after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-ring focus-visible:outline-hidden data-dragging:bg-ring data-hovering:bg-ring data-[orientation=vertical]:h-px data-[orientation=vertical]:w-full data-[orientation=vertical]:*:rotate-90 data-[orientation=vertical]:after:start-0 data-[orientation=vertical]:after:h-1 data-[orientation=vertical]:after:w-full data-[orientation=vertical]:after:translate-x-0 data-[orientation=vertical]:after:-translate-y-1/2",
         className,
       )}
       {...props}

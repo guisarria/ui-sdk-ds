@@ -1,6 +1,7 @@
 import * as React from "react"
 import { Button as ButtonPrimitive } from "@ui-sdk/react/button"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 const variants = {
   default: "bg-primary text-primary-foreground hover:bg-primary/80",
@@ -17,10 +18,10 @@ const variants = {
 }
 
 const sizes = {
-  default: "h-8 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-  xs: "h-6 gap-1 px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
-  sm: "h-7 gap-1 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-  lg: "h-9 gap-1.5 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
+  default: "h-8 gap-1.5 px-3 has-data-[icon=inline-end]:pe-2.5 has-data-[icon=inline-start]:ps-2.5",
+  xs: "h-6 gap-1 px-2.5 text-xs has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2 [&_svg:not([class*='size-'])]:size-3",
+  sm: "h-7 gap-1 px-3 has-data-[icon=inline-end]:pe-2 has-data-[icon=inline-start]:ps-2",
+  lg: "h-9 gap-1.5 px-4 has-data-[icon=inline-end]:pe-3 has-data-[icon=inline-start]:ps-3",
   icon: "size-8",
   "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
   "icon-sm": "size-7",
@@ -45,9 +46,7 @@ function Button({
   variant = "default",
   size = "default",
   ...props
-}: Omit<React.ComponentProps<typeof ButtonPrimitive>, "className"> & {
-  className?: string
-} & ButtonVariants) {
+}: PrimitiveProps<typeof ButtonPrimitive> & ButtonVariants) {
   return (
     <ButtonPrimitive
       data-variant={variant}

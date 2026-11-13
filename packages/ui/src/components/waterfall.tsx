@@ -17,12 +17,9 @@ import {
 import { cn } from "cn"
 import { ChevronRightIcon } from "lucide-react"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
-function Waterfall({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof WaterfallPrimitive>, "className"> & { className?: string }) {
+function Waterfall({ className, ...props }: PrimitiveProps<typeof WaterfallPrimitive>) {
   return (
     <WaterfallPrimitive
       className={cn(
@@ -37,9 +34,7 @@ function Waterfall({
 function WaterfallHeaderRow({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof WaterfallHeaderRowPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof WaterfallHeaderRowPrimitive>) {
   return (
     <WaterfallHeaderRowPrimitive
       className={cn("flex border-b bg-muted/50 text-xs text-muted-foreground", className)}
@@ -51,9 +46,7 @@ function WaterfallHeaderRow({
 function WaterfallColumnHeader({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof WaterfallColumnHeaderPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof WaterfallColumnHeaderPrimitive>) {
   return (
     <WaterfallColumnHeaderPrimitive
       className={cn(
@@ -65,21 +58,11 @@ function WaterfallColumnHeader({
   )
 }
 
-function WaterfallAxis({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof WaterfallAxisPrimitive>, "className"> & {
-  className?: string
-}) {
+function WaterfallAxis({ className, ...props }: PrimitiveProps<typeof WaterfallAxisPrimitive>) {
   return <WaterfallAxisPrimitive className={cn("relative h-4 w-full", className)} {...props} />
 }
 
-function WaterfallTick({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof WaterfallTickPrimitive>, "className"> & {
-  className?: string
-}) {
+function WaterfallTick({ className, ...props }: PrimitiveProps<typeof WaterfallTickPrimitive>) {
   return (
     <WaterfallTickPrimitive
       className={cn(
@@ -91,12 +74,7 @@ function WaterfallTick({
   )
 }
 
-function WaterfallMark({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof WaterfallMarkPrimitive>, "className"> & {
-  className?: string
-}) {
+function WaterfallMark({ className, ...props }: PrimitiveProps<typeof WaterfallMarkPrimitive>) {
   return (
     <WaterfallMarkPrimitive
       className={cn(
@@ -108,10 +86,7 @@ function WaterfallMark({
   )
 }
 
-function WaterfallRow({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof WaterfallRowPrimitive>, "className"> & { className?: string }) {
+function WaterfallRow({ className, ...props }: PrimitiveProps<typeof WaterfallRowPrimitive>) {
   return (
     <WaterfallRowPrimitive
       className={cn(
@@ -126,9 +101,7 @@ function WaterfallRow({
 function WaterfallRowHeader({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof WaterfallRowHeaderPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof WaterfallRowHeaderPrimitive>) {
   return (
     <WaterfallRowHeaderPrimitive
       className={cn(
@@ -144,11 +117,7 @@ function WaterfallIndicator({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof WaterfallIndicatorPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof WaterfallIndicatorPrimitive>>) {
   return (
     <WaterfallIndicatorPrimitive
       className={cn(
@@ -162,12 +131,7 @@ function WaterfallIndicator({
   )
 }
 
-function WaterfallCell({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof WaterfallCellPrimitive>, "className"> & {
-  className?: string
-}) {
+function WaterfallCell({ className, ...props }: PrimitiveProps<typeof WaterfallCellPrimitive>) {
   return (
     <WaterfallCellPrimitive
       className={cn(
@@ -179,10 +143,7 @@ function WaterfallCell({
   )
 }
 
-function WaterfallBar({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof WaterfallBarPrimitive>, "className"> & { className?: string }) {
+function WaterfallBar({ className, ...props }: PrimitiveProps<typeof WaterfallBarPrimitive>) {
   return (
     <WaterfallBarPrimitive
       className={cn(

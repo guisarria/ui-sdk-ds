@@ -8,24 +8,19 @@ import {
 import { cn } from "cn"
 
 import { segmentClassName, segmentFieldClassName } from "@ui-sdk-ds/ui/components/date-input"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 function TimeInputSegment({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TimeInputSegmentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TimeInputSegmentPrimitive>) {
   const id = React.useId()
   return (
     <TimeInputSegmentPrimitive id={id} className={cn(segmentClassName, className)} {...props} />
   )
 }
 
-function TimeInput({
-  className,
-  children,
-  ...props
-}: Omit<React.ComponentProps<typeof TimeInputPrimitive>, "className"> & { className?: string }) {
+function TimeInput({ className, children, ...props }: PrimitiveProps<typeof TimeInputPrimitive>) {
   return (
     <TimeInputPrimitive className={cn(segmentFieldClassName, className)} {...props}>
       {children ??

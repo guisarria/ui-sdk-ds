@@ -31,6 +31,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@ui-sdk-ds/ui/components/avatar"
 import {
   Bubble,
+  BubbleButton,
   BubbleContent,
   BubbleGroup,
   BubbleReactions,
@@ -43,12 +44,8 @@ import {
   CardHeader,
   CardTitle,
 } from "@ui-sdk-ds/ui/components/card"
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupTextarea,
-} from "@ui-sdk-ds/ui/components/input-group"
+import { InputGroup, InputGroupAddon, InputGroupButton } from "@ui-sdk-ds/ui/components/input"
+import { Textarea } from "@ui-sdk-ds/ui/components/textarea"
 import { Marker, MarkerContent, MarkerIcon } from "@ui-sdk-ds/ui/components/marker"
 import {
   Message,
@@ -63,7 +60,6 @@ import {
   MessageScrollerButton,
   MessageScrollerContent,
   MessageScrollerItem,
-  MessageScrollerProvider,
   MessageScrollerViewport,
 } from "@ui-sdk-ds/ui/components/message-scroller"
 import {
@@ -148,15 +144,6 @@ const replies = [
   "Got it. Rolling out to 25% of traffic first, then the rest after 10 minutes.",
 ]
 
-const scrollToEndScript = `(function () {
-  var viewport = document.getElementById("assistant-thread")
-  if (!viewport) {
-    return
-  }
-  viewport.scrollTop = viewport.scrollHeight
-  viewport.removeAttribute("data-pending-scroll")
-})()`
-
 export function Conversation() {
   return (
     <Section
@@ -176,10 +163,9 @@ export function Conversation() {
 
 function AssistantAvatar() {
   return (
-    <Avatar>
+    <Avatar role="img" aria-label="Workspace assistant">
       <AvatarFallback>
         <SparklesIcon className="size-4" aria-hidden="true" />
-        <span className="sr-only">Workspace assistant</span>
       </AvatarFallback>
     </Avatar>
   )
@@ -278,35 +264,28 @@ function ThreadBlock() {
             <CardDescription>api · dpl_6Jm1 · main</CardDescription>
           </CardHeader>
           <CardContent className="min-h-0 flex-1 overflow-hidden p-0">
-            <MessageScrollerProvider autoScroll defaultScrollPosition="end">
-              <MessageScroller>
-                <MessageScrollerViewport id="assistant-thread" suppressHydrationWarning>
-                  <MessageScrollerContent className="mx-auto max-w-3xl gap-6 p-(--card-spacing)">
-                    {turns.map((turn) => (
-                      <MessageScrollerItem
-                        key={turn.id}
-                        messageId={turn.id}
-                        scrollAnchor={turn.kind === "message" && turn.role === "user"}
-                      >
-                        <ThreadTurn turn={turn} />
-                      </MessageScrollerItem>
-                    ))}
-                    {thinking && (
-                      <MessageScrollerItem>
-                        <Marker role="status">
-                          <MarkerIcon>
-                            <Spinner aria-hidden="true" />
-                          </MarkerIcon>
-                          <MarkerContent className="shimmer">Thinking…</MarkerContent>
-                        </Marker>
-                      </MessageScrollerItem>
-                    )}
-                  </MessageScrollerContent>
-                </MessageScrollerViewport>
-                <script dangerouslySetInnerHTML={{ __html: scrollToEndScript }} />
-                <MessageScrollerButton />
-              </MessageScroller>
-            </MessageScrollerProvider>
+            <MessageScroller>
+              <MessageScrollerViewport aria-label="Build assistant thread">
+                <MessageScrollerContent className="mx-auto max-w-3xl gap-6 p-(--card-spacing)">
+                  {turns.map((turn) => (
+                    <MessageScrollerItem key={turn.id}>
+                      <ThreadTurn turn={turn} />
+                    </MessageScrollerItem>
+                  ))}
+                  {thinking && (
+                    <MessageScrollerItem>
+                      <Marker role="status">
+                        <MarkerIcon>
+                          <Spinner aria-hidden="true" />
+                        </MarkerIcon>
+                        <MarkerContent className="shimmer">Thinking…</MarkerContent>
+                      </Marker>
+                    </MessageScrollerItem>
+                  )}
+                </MessageScrollerContent>
+              </MessageScrollerViewport>
+              <MessageScrollerButton />
+            </MessageScroller>
           </CardContent>
           <CardFooter className="border-t">
             <form
@@ -317,16 +296,16 @@ function ThreadBlock() {
               }}
             >
               <InputGroup>
-                <InputGroupTextarea
+                <Textarea
                   name="message-the-build-assistant"
                   aria-label="Message the build assistant"
                   placeholder="Ask about this deployment…"
                   value={draft}
-                  onChange={(event) => setDraft(event.target.value)}
+                  onValueChange={setDraft}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" && !event.shiftKey) {
                       event.preventDefault()
-                      send()
+                      event.currentTarget.form?.requestSubmit()
                     }
                   }}
                 />
@@ -338,7 +317,7 @@ function ThreadBlock() {
                     type="submit"
                     size="icon-xs"
                     variant="brand"
-                    className="ml-auto"
+                    className="ms-auto"
                     aria-label="Send message"
                     disabled={!draft.trim() || thinking}
                   >
@@ -468,11 +447,7 @@ function BubbleBlock() {
           <div className="flex flex-col gap-2">
             {["Show the diff", "Roll back production", "Open build logs"].map((reply) => (
               <Bubble key={reply} variant="outline">
-                <BubbleContent
-                  render={<button type="button" onClick={() => toast({ title: reply })} />}
-                >
-                  {reply}
-                </BubbleContent>
+                <BubbleButton onClick={() => toast({ title: reply })}>{reply}</BubbleButton>
               </Bubble>
             ))}
           </div>

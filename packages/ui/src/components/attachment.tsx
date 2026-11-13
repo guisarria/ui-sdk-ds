@@ -3,6 +3,7 @@ import { mergeProps, renderElement, type RenderProp } from "@ui-sdk/react/primit
 import { cn } from "cn"
 
 import { Button } from "@ui-sdk-ds/ui/components/button"
+import type { RenderProps } from "@ui-sdk-ds/ui/lib/parts"
 
 const sizes = {
   default:
@@ -34,20 +35,25 @@ function Attachment({
   state = "done",
   size = "default",
   orientation = "horizontal",
+  render,
   ...props
-}: React.ComponentProps<"div"> &
+}: RenderProps<"div"> &
   AttachmentVariants & {
     state?: "idle" | "uploading" | "processing" | "error" | "done"
   }) {
-  return (
-    <div
-      data-slot="attachment"
-      data-state={state}
-      data-size={size}
-      data-orientation={orientation}
-      className={cn(attachmentVariants({ size, orientation }), className)}
-      {...props}
-    />
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "attachment",
+        "data-state": state,
+        "data-size": size,
+        "data-orientation": orientation,
+        className: cn(attachmentVariants({ size, orientation }), className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
@@ -71,68 +77,89 @@ function attachmentMediaVariants({ variant = "icon" }: AttachmentMediaVariants =
 function AttachmentMedia({
   className,
   variant = "icon",
+  render,
   ...props
-}: React.ComponentProps<"div"> & AttachmentMediaVariants) {
-  return (
-    <div
-      data-slot="attachment-media"
-      data-variant={variant}
-      className={cn(attachmentMediaVariants({ variant }), className)}
-      {...props}
-    />
+}: RenderProps<"div"> & AttachmentMediaVariants) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "attachment-media",
+        "data-variant": variant,
+        className: cn(attachmentMediaVariants({ variant }), className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function AttachmentContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="attachment-content"
-      className={cn(
-        "max-w-full min-w-0 flex-1 leading-tight group-data-[orientation=vertical]/attachment:px-1",
-        className,
-      )}
-      {...props}
-    />
+function AttachmentContent({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "attachment-content",
+        className: cn(
+          "max-w-full min-w-0 flex-1 leading-tight group-data-[orientation=vertical]/attachment:px-1",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function AttachmentTitle({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      data-slot="attachment-title"
-      className={cn(
-        "block max-w-full min-w-0 truncate font-medium group-data-[state=processing]/attachment:shimmer group-data-[state=uploading]/attachment:shimmer",
-        className,
-      )}
-      {...props}
-    />
+function AttachmentTitle({ className, render, ...props }: RenderProps<"span">) {
+  return renderElement(
+    "span",
+    mergeProps(
+      {
+        "data-slot": "attachment-title",
+        className: cn(
+          "block max-w-full min-w-0 truncate font-medium group-data-[state=processing]/attachment:shimmer group-data-[state=uploading]/attachment:shimmer",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function AttachmentDescription({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      data-slot="attachment-description"
-      className={cn(
-        "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive/80",
-        "max-w-full",
-        className,
-      )}
-      {...props}
-    />
+function AttachmentDescription({ className, render, ...props }: RenderProps<"span">) {
+  return renderElement(
+    "span",
+    mergeProps(
+      {
+        "data-slot": "attachment-description",
+        className: cn(
+          "mt-0.5 block min-w-0 truncate text-xs text-muted-foreground group-data-[state=error]/attachment:text-destructive/80",
+          "max-w-full",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function AttachmentActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="attachment-actions"
-      className={cn(
-        "relative z-20 flex shrink-0 items-center group-data-[orientation=vertical]/attachment:absolute group-data-[orientation=vertical]/attachment:top-3 group-data-[orientation=vertical]/attachment:right-3 group-data-[orientation=vertical]/attachment:gap-1",
-        className,
-      )}
-      {...props}
-    />
+function AttachmentActions({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "attachment-actions",
+        className: cn(
+          "relative z-20 flex shrink-0 items-center group-data-[orientation=vertical]/attachment:absolute group-data-[orientation=vertical]/attachment:end-3 group-data-[orientation=vertical]/attachment:top-3 group-data-[orientation=vertical]/attachment:gap-1",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
@@ -142,15 +169,7 @@ function AttachmentAction({
   size = "icon-xs",
   ...props
 }: React.ComponentProps<typeof Button>) {
-  return (
-    <Button
-      data-slot="attachment-action"
-      variant={variant ?? "ghost"}
-      size={size}
-      className={cn(className)}
-      {...props}
-    />
-  )
+  return <Button variant={variant ?? "ghost"} size={size} className={cn(className)} {...props} />
 }
 
 function AttachmentTrigger({
@@ -173,16 +192,20 @@ function AttachmentTrigger({
   )
 }
 
-function AttachmentGroup({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="attachment-group"
-      className={cn(
-        "flex min-w-0 scroll-fade-x snap-x snap-mandatory scroll-px-1 scrollbar-none gap-3 overflow-x-auto overscroll-x-contain py-1 *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start",
-        className,
-      )}
-      {...props}
-    />
+function AttachmentGroup({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "attachment-group",
+        className: cn(
+          "flex min-w-0 scroll-fade-x snap-x snap-mandatory scroll-px-1 scrollbar-none gap-3 overflow-x-auto overscroll-x-contain py-1 *:data-[slot=attachment]:flex-none *:data-[slot=attachment]:snap-start",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 

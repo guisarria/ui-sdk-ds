@@ -12,22 +12,15 @@ import {
 import { cn } from "cn"
 import { ChevronDownIcon } from "lucide-react"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function NavigationMenu({
   align = "start",
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof NavigationMenuPrimitive>, "className"> & { className?: string }
-> &
-  Pick<
-    Omit<React.ComponentProps<typeof NavigationMenuViewportPrimitive>, "className"> & {
-      className?: string
-    },
-    "align"
-  >) {
+}: WithNodeChildren<PrimitiveProps<typeof NavigationMenuPrimitive>> &
+  Pick<PrimitiveProps<typeof NavigationMenuViewportPrimitive>, "align">) {
   return (
     <NavigationMenuPrimitive
       className={cn(
@@ -45,9 +38,7 @@ function NavigationMenu({
 function NavigationMenuList({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NavigationMenuListPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NavigationMenuListPrimitive>) {
   return (
     <NavigationMenuListPrimitive
       className={cn("group flex flex-1 list-none items-center justify-center gap-0", className)}
@@ -59,9 +50,7 @@ function NavigationMenuList({
 function NavigationMenuItem({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NavigationMenuItemPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NavigationMenuItemPrimitive>) {
   return <NavigationMenuItemPrimitive className={cn("relative", className)} {...props} />
 }
 
@@ -73,11 +62,7 @@ function NavigationMenuTrigger({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof NavigationMenuTriggerPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof NavigationMenuTriggerPrimitive>>) {
   return (
     <NavigationMenuTriggerPrimitive
       className={cn(navigationMenuTriggerStyle(), "group", className)}
@@ -85,7 +70,7 @@ function NavigationMenuTrigger({
     >
       {children}{" "}
       <ChevronDownIcon
-        className="relative top-px ml-1 size-3 transition duration-300 group-data-open/navigation-menu-trigger:rotate-180"
+        className="relative top-px ms-1 size-3 transition duration-300 group-data-open/navigation-menu-trigger:rotate-180"
         aria-hidden="true"
       />
     </NavigationMenuTriggerPrimitive>
@@ -95,9 +80,7 @@ function NavigationMenuTrigger({
 function NavigationMenuContent({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NavigationMenuContentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NavigationMenuContentPrimitive>) {
   return (
     <NavigationMenuContentPrimitive
       className={cn(
@@ -116,9 +99,7 @@ function NavigationMenuPositioner({
   align = "start",
   alignOffset = 0,
   ...props
-}: Omit<React.ComponentProps<typeof NavigationMenuViewportPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NavigationMenuViewportPrimitive>) {
   return (
     <NavigationMenuViewportPrimitive
       side={side}
@@ -137,9 +118,7 @@ function NavigationMenuPositioner({
 function NavigationMenuLink({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NavigationMenuLinkPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NavigationMenuLinkPrimitive>) {
   return (
     <NavigationMenuLinkPrimitive
       className={cn(
@@ -154,9 +133,7 @@ function NavigationMenuLink({
 function NavigationMenuIndicator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof NavigationMenuIndicatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof NavigationMenuIndicatorPrimitive>) {
   return (
     <NavigationMenuIndicatorPrimitive
       className={cn(

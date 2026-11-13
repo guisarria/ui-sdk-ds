@@ -15,16 +15,14 @@ import { cn } from "cn"
 import { FlipHorizontal2Icon, FlipVertical2Icon, RotateCwIcon } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 const toolClassName = cn(buttonVariants({ variant: "outline", size: "icon" }))
 
 function ImageCropperViewport({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ImageCropperViewportPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ImageCropperViewportPrimitive>) {
   return (
     <ImageCropperViewportPrimitive
       className={cn(
@@ -39,9 +37,7 @@ function ImageCropperViewport({
 function ImageCropperImage({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ImageCropperImagePrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ImageCropperImagePrimitive>) {
   return (
     <ImageCropperImagePrimitive
       className={cn("pointer-events-none max-w-none", className)}
@@ -54,11 +50,7 @@ function ImageCropperSelection({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ImageCropperSelectionPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ImageCropperSelectionPrimitive>>) {
   return (
     <ImageCropperSelectionPrimitive
       className={cn(
@@ -82,9 +74,7 @@ function ImageCropperSelection({
 function ImageCropperGrid({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ImageCropperGridPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ImageCropperGridPrimitive>) {
   return (
     <ImageCropperGridPrimitive
       className={cn(
@@ -99,9 +89,7 @@ function ImageCropperGrid({
 function ImageCropperHandle({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ImageCropperHandlePrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ImageCropperHandlePrimitive>) {
   return (
     <ImageCropperHandlePrimitive
       className={cn(
@@ -116,9 +104,7 @@ function ImageCropperHandle({
 function ImageCropperZoom({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ImageCropperZoomPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ImageCropperZoomPrimitive>) {
   return (
     <ImageCropperZoomPrimitive
       aria-label="Zoom"
@@ -132,11 +118,7 @@ function ImageCropperRotate({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ImageCropperRotatePrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ImageCropperRotatePrimitive>>) {
   return (
     <ImageCropperRotatePrimitive
       aria-label="Rotate"
@@ -153,9 +135,7 @@ function ImageCropperFlip({
   children,
   direction = "horizontal",
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ImageCropperFlipPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ImageCropperFlipPrimitive>>) {
   const Icon = direction === "vertical" ? FlipVertical2Icon : FlipHorizontal2Icon
   return (
     <ImageCropperFlipPrimitive

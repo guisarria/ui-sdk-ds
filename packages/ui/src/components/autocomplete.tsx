@@ -21,21 +21,19 @@ import { cn } from "cn"
 import { ChevronDownIcon, XIcon } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
-import { InputGroup, InputGroupAddon } from "@ui-sdk-ds/ui/components/input-group"
+import { inputClassName } from "@ui-sdk-ds/ui/components/input"
 import { labelClassName } from "@ui-sdk-ds/ui/components/label"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 const iconButtonClassName = cn(
   buttonVariants({ variant: "ghost", size: "icon-xs" }),
-  "size-6 rounded-xl p-0",
+  "size-6 rounded-xl p-0 in-data-[slot=input-group]:me-1",
 )
 
 function AutocompleteLabel({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteLabelPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteLabelPrimitive>) {
   return <AutocompleteLabelPrimitive className={cn(labelClassName, className)} {...props} />
 }
 
@@ -43,11 +41,7 @@ function AutocompleteTrigger({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof AutocompleteTriggerPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof AutocompleteTriggerPrimitive>>) {
   return (
     <AutocompleteTriggerPrimitive
       aria-label="Show suggestions"
@@ -63,11 +57,7 @@ function AutocompleteClear({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof AutocompleteClearPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof AutocompleteClearPrimitive>>) {
   return (
     <AutocompleteClearPrimitive
       aria-label="Clear"
@@ -81,33 +71,9 @@ function AutocompleteClear({
 
 function AutocompleteInput({
   className,
-  children,
-  showTrigger = false,
-  showClear = false,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteInputPrimitive>, "className"> & {
-  className?: string
-} & {
-  children?: React.ReactNode
-  showTrigger?: boolean
-  showClear?: boolean
-}) {
-  return (
-    <InputGroup className={cn("w-auto", className)}>
-      <AutocompleteInputPrimitive
-        data-input-group-control=""
-        className="h-8 w-full min-w-0 flex-1 rounded-none border-0 bg-transparent px-2.5 py-1 text-base shadow-none outline-none placeholder:text-muted-foreground disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm"
-        {...props}
-      />
-      {(showTrigger || showClear) && (
-        <InputGroupAddon align="inline-end">
-          {showClear && <AutocompleteClear />}
-          {showTrigger && <AutocompleteTrigger />}
-        </InputGroupAddon>
-      )}
-      {children}
-    </InputGroup>
-  )
+}: PrimitiveProps<typeof AutocompleteInputPrimitive>) {
+  return <AutocompleteInputPrimitive className={cn(inputClassName, className)} {...props} />
 }
 
 function AutocompleteContent({
@@ -115,9 +81,7 @@ function AutocompleteContent({
   sideOffset = 6,
   align = "start",
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteContentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteContentPrimitive>) {
   return (
     <AutocompleteContentPrimitive
       sideOffset={sideOffset}
@@ -134,9 +98,7 @@ function AutocompleteContent({
 function AutocompleteList({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteListPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteListPrimitive>) {
   return (
     <AutocompleteListPrimitive
       className={cn(
@@ -151,9 +113,7 @@ function AutocompleteList({
 function AutocompleteItem({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteItemPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteItemPrimitive>) {
   return (
     <AutocompleteItemPrimitive
       className={cn(
@@ -168,9 +128,7 @@ function AutocompleteItem({
 function AutocompleteItemText({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteItemTextPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteItemTextPrimitive>) {
   return (
     <AutocompleteItemTextPrimitive
       className={cn(
@@ -185,9 +143,7 @@ function AutocompleteItemText({
 function AutocompleteItemIcon({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteItemIconPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteItemIconPrimitive>) {
   return (
     <AutocompleteItemIconPrimitive
       className={cn("flex size-4 shrink-0 text-muted-foreground", className)}
@@ -199,18 +155,14 @@ function AutocompleteItemIcon({
 function AutocompleteGroup({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteGroupPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteGroupPrimitive>) {
   return <AutocompleteGroupPrimitive className={cn(className)} {...props} />
 }
 
 function AutocompleteGroupLabel({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteGroupLabelPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteGroupLabelPrimitive>) {
   return (
     <AutocompleteGroupLabelPrimitive
       className={cn("px-2 py-1.5 text-xs text-muted-foreground", className)}
@@ -222,9 +174,7 @@ function AutocompleteGroupLabel({
 function AutocompleteEmpty({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteEmptyPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteEmptyPrimitive>) {
   return (
     <AutocompleteEmptyPrimitive
       className={cn(
@@ -239,9 +189,7 @@ function AutocompleteEmpty({
 function AutocompleteStatus({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteStatusPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteStatusPrimitive>) {
   return (
     <AutocompleteStatusPrimitive
       className={cn("px-2 py-1.5 text-sm text-muted-foreground empty:hidden", className)}
@@ -253,9 +201,7 @@ function AutocompleteStatus({
 function AutocompleteSeparator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof AutocompleteSeparatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof AutocompleteSeparatorPrimitive>) {
   return (
     <AutocompleteSeparatorPrimitive
       className={cn("-mx-1 my-1 h-px bg-border", className)}

@@ -13,6 +13,7 @@ import {
   LogOutIcon,
   RocketIcon,
   RotateCcwIcon,
+  SearchIcon,
   SettingsIcon,
   ShareIcon,
   SlidersHorizontalIcon,
@@ -60,12 +61,14 @@ import {
   ContextMenuTrigger,
 } from "@ui-sdk-ds/ui/components/context-menu"
 import {
+  createDialogController,
   Dialog,
   DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
   DialogHeader,
+  DialogShortcut,
   DialogTitle,
   DialogTrigger,
 } from "@ui-sdk-ds/ui/components/dialog"
@@ -103,13 +106,12 @@ import {
   FieldTitle,
 } from "@ui-sdk-ds/ui/components/field"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ui-sdk-ds/ui/components/hover-card"
-import { Input } from "@ui-sdk-ds/ui/components/input"
 import {
+  Input,
   InputGroup,
   InputGroupAddon,
   InputGroupButton,
-  InputGroupInput,
-} from "@ui-sdk-ds/ui/components/input-group"
+} from "@ui-sdk-ds/ui/components/input"
 import {
   Item,
   ItemContent,
@@ -117,7 +119,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@ui-sdk-ds/ui/components/item"
-import { Kbd, KbdGroup } from "@ui-sdk-ds/ui/components/kbd"
+import { Kbd } from "@ui-sdk-ds/ui/components/kbd"
 import {
   Popover,
   PopoverContent,
@@ -221,11 +223,12 @@ function DialogBlock() {
               <AlertDialogCancel>Keep project</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
+                data-agent-confirm="Deletes marketing-site with its 48 deployments and 2 domains"
                 onClick={() => {
                   toast({ title: "marketing-site deleted", type: "error" })
                 }}
               >
-                Delete project
+                Delete forever
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -246,11 +249,12 @@ function DialogBlock() {
               <AlertDialogCancel>Cancel</AlertDialogCancel>
               <AlertDialogAction
                 variant="destructive"
+                data-agent-confirm="Revokes the CI deploys token, so pipelines using it fail"
                 onClick={() => {
                   toast({ title: "Token revoked" })
                 }}
               >
-                Revoke
+                Revoke now
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
@@ -343,7 +347,7 @@ function SheetBlock() {
               </DrawerHeader>
               <div className="p-4">
                 <InputGroup>
-                  <InputGroupInput
+                  <Input
                     name="preview-link"
                     aria-label="Preview link"
                     readOnly
@@ -415,7 +419,7 @@ function PopoverBlock() {
             </HoverCardTrigger>
             <HoverCardContent>
               <div className="flex gap-3">
-                <Avatar size="lg">
+                <Avatar size="lg" aria-hidden="true">
                   <AvatarImage src={avatarSrc(140)} alt="" />
                   <AvatarFallback>KW</AvatarFallback>
                 </Avatar>
@@ -467,7 +471,7 @@ function MenuBlock() {
       <Example title="Dropdown menu · account">
         <DropdownMenu>
           <DropdownMenuTrigger render={<Button variant="outline" />}>
-            <Avatar size="sm">
+            <Avatar size="sm" aria-hidden="true">
               <AvatarImage src={avatarSrc(200)} alt="" />
               <AvatarFallback>AS</AvatarFallback>
             </Avatar>
@@ -516,7 +520,7 @@ function MenuBlock() {
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem variant="destructive">
+              <DropdownMenuItem variant="destructive" data-agent-confirm="Signs you out">
                 <LogOutIcon />
                 Log out
               </DropdownMenuItem>
@@ -526,7 +530,12 @@ function MenuBlock() {
       </Example>
       <Example title="Context menu · right-click or long-press the row" className="block">
         <ContextMenu>
-          <ContextMenuTrigger render={<Item variant="outline" />}>
+          <ContextMenuTrigger
+            role="group"
+            aria-label="Deployment dpl_8Kq2"
+            tabIndex={0}
+            render={<Item variant="outline" />}
+          >
             <ItemMedia variant="icon">
               <RocketIcon />
             </ItemMedia>
@@ -571,7 +580,10 @@ function MenuBlock() {
             </ContextMenuGroup>
             <ContextMenuSeparator />
             <ContextMenuGroup>
-              <ContextMenuItem variant="destructive">
+              <ContextMenuItem
+                variant="destructive"
+                data-agent-confirm="Deletes the deployment and its build output"
+              >
                 <Trash2Icon />
                 Delete deployment
               </ContextMenuItem>
@@ -586,17 +598,7 @@ function MenuBlock() {
 function CommandBlock() {
   const [search, setSearch] = React.useState("kubernetes")
   const [open, setOpen] = React.useState(false)
-
-  React.useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key.toLowerCase() === "k" && (event.metaKey || event.ctrlKey)) {
-        event.preventDefault()
-        setOpen((current) => !current)
-      }
-    }
-    window.addEventListener("keydown", onKeyDown)
-    return () => window.removeEventListener("keydown", onKeyDown)
-  }, [])
+  const [palette] = React.useState(() => createDialogController())
 
   return (
     <Block
@@ -606,7 +608,12 @@ function CommandBlock() {
     >
       <Example title="Inline · groups and shortcuts" className="block">
         <Command className="rounded-3xl border">
-          <CommandInput placeholder="Type a command or search…" />
+          <InputGroup>
+            <InputGroupAddon>
+              <SearchIcon />
+            </InputGroupAddon>
+            <CommandInput aria-label="Search commands" placeholder="Type a command or search…" />
+          </InputGroup>
           <CommandEmpty>No results found.</CommandEmpty>
           <CommandList>
             <CommandGroup heading="Suggestions">
@@ -647,7 +654,12 @@ function CommandBlock() {
       <Example title="Empty · no matches, and the palette" className="block">
         <div className="flex flex-col gap-4">
           <Command query={search} onQueryChange={setSearch} className="rounded-3xl border">
-            <CommandInput placeholder="Search projects…" />
+            <InputGroup>
+              <InputGroupAddon>
+                <SearchIcon />
+              </InputGroupAddon>
+              <CommandInput aria-label="Search projects" placeholder="Search projects…" />
+            </InputGroup>
             <CommandEmpty>No projects match “{search}”.</CommandEmpty>
             <CommandList>
               <CommandGroup heading="Projects">
@@ -657,17 +669,23 @@ function CommandBlock() {
               </CommandGroup>
             </CommandList>
           </Command>
-          <Button variant="outline" className="self-start" onClick={() => setOpen(true)}>
+          <DialogTrigger
+            controller={palette}
+            shortcut="mod+k"
+            render={<Button variant="outline" className="self-start" />}
+          >
             Open command palette
-            <KbdGroup>
-              <Kbd>⌘</Kbd>
-              <Kbd>K</Kbd>
-            </KbdGroup>
-          </Button>
+            <DialogShortcut />
+          </DialogTrigger>
         </div>
-        <CommandDialog open={open} onOpenChange={setOpen}>
+        <CommandDialog controller={palette} open={open} onOpenChange={setOpen}>
           <Command>
-            <CommandInput placeholder="Type a command or search…" />
+            <InputGroup>
+              <InputGroupAddon>
+                <SearchIcon />
+              </InputGroupAddon>
+              <CommandInput aria-label="Search commands" placeholder="Type a command or search…" />
+            </InputGroup>
             <CommandEmpty>No results found.</CommandEmpty>
             <CommandList>
               <CommandGroup heading="Go to">

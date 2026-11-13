@@ -12,16 +12,14 @@ import { cn } from "cn"
 import { XIcon } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function FileInputTrigger({
   className,
   variant = "outline",
   size = "sm",
   ...props
-}: Omit<React.ComponentProps<typeof FileInputTriggerPrimitive>, "className"> & {
-  className?: string
-} & Parameters<typeof buttonVariants>[0]) {
+}: PrimitiveProps<typeof FileInputTriggerPrimitive> & Parameters<typeof buttonVariants>[0]) {
   return (
     <FileInputTriggerPrimitive
       className={cn(buttonVariants({ variant, size }), className)}
@@ -33,9 +31,7 @@ function FileInputTrigger({
 function FileInputDropzone({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof FileInputDropzonePrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof FileInputDropzonePrimitive>) {
   return (
     <FileInputDropzonePrimitive
       className={cn(
@@ -47,12 +43,7 @@ function FileInputDropzone({
   )
 }
 
-function FileInputList({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof FileInputListPrimitive>, "className"> & {
-  className?: string
-}) {
+function FileInputList({ className, ...props }: PrimitiveProps<typeof FileInputListPrimitive>) {
   return (
     <FileInputListPrimitive
       className={cn("flex flex-col gap-1.5 empty:hidden", className)}
@@ -61,12 +52,7 @@ function FileInputList({
   )
 }
 
-function FileInputItem({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof FileInputItemPrimitive>, "className"> & {
-  className?: string
-}) {
+function FileInputItem({ className, ...props }: PrimitiveProps<typeof FileInputItemPrimitive>) {
   return (
     <FileInputItemPrimitive
       className={cn(
@@ -82,11 +68,7 @@ function FileInputItemRemove({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof FileInputItemRemovePrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof FileInputItemRemovePrimitive>>) {
   return (
     <FileInputItemRemovePrimitive
       aria-label="Remove file"

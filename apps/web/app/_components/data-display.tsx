@@ -241,7 +241,7 @@ function TableBlock() {
               <TableHead>Commit</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Environment</TableHead>
-              <TableHead className="text-right">Duration</TableHead>
+              <TableHead className="text-end">Duration</TableHead>
               <TableHead>
                 <span className="sr-only">Actions</span>
               </TableHead>
@@ -263,10 +263,10 @@ function TableBlock() {
                   <StatusBadge status={deployment.status} />
                 </TableCell>
                 <TableCell className="text-muted-foreground">{deployment.environment}</TableCell>
-                <TableCell className="text-right font-mono text-xs tabular-nums">
+                <TableCell className="text-end font-mono text-xs tabular-nums">
                   {deployment.duration}
                 </TableCell>
-                <TableCell className="text-right">
+                <TableCell className="text-end">
                   <DeploymentActions id={deployment.id} />
                 </TableCell>
               </TableRow>
@@ -281,7 +281,7 @@ function TableBlock() {
               <TableRow>
                 <TableHead>Invoice</TableHead>
                 <TableHead>Period</TableHead>
-                <TableHead className="text-right">Amount</TableHead>
+                <TableHead className="text-end">Amount</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -293,14 +293,14 @@ function TableBlock() {
                 <TableRow key={invoice}>
                   <TableCell className="font-mono text-xs">{invoice}</TableCell>
                   <TableCell>{period}</TableCell>
-                  <TableCell className="text-right tabular-nums">{amount}</TableCell>
+                  <TableCell className="text-end tabular-nums">{amount}</TableCell>
                 </TableRow>
               ))}
             </TableBody>
             <TableFooter>
               <TableRow>
                 <TableCell colSpan={2}>Total, Q3</TableCell>
-                <TableCell className="text-right tabular-nums">$1,156.75</TableCell>
+                <TableCell className="text-end tabular-nums">$1,156.75</TableCell>
               </TableRow>
             </TableFooter>
           </Table>
@@ -311,7 +311,7 @@ function TableBlock() {
               <TableRow>
                 <TableHead>Project</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className="text-right">Duration</TableHead>
+                <TableHead className="text-end">Duration</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -359,7 +359,9 @@ function DeploymentActions({ id }: { id: string }) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          <DropdownMenuItem variant="destructive">Cancel</DropdownMenuItem>
+          <DropdownMenuItem variant="destructive" data-agent-confirm={`Cancels deployment ${id}`}>
+            Cancel deployment
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu>
@@ -470,7 +472,7 @@ function ItemBlock() {
               {index > 0 && <ItemSeparator className="my-0" />}
               <Item size="sm">
                 <ItemMedia>
-                  <Avatar>
+                  <Avatar aria-hidden="true">
                     <AvatarImage src={avatarSrc(index * 70 + 200)} alt="" />
                     <AvatarFallback>{member.initials}</AvatarFallback>
                   </Avatar>
@@ -607,7 +609,7 @@ function AccordionBlock() {
       description="Accordions stack sections people open one at a time, like FAQs. Collapsible hides a single overflow region behind a toggle."
     >
       <Example title="Accordion · first item open" className="block">
-        <Accordion defaultValue={["faq-0"]}>
+        <Accordion aria-label="Frequently asked questions" defaultValue={["faq-0"]}>
           {faqs.map((faq, index) => (
             <AccordionItem key={faq.question} value={`faq-${index}`}>
               <AccordionTrigger>{faq.question}</AccordionTrigger>
@@ -623,7 +625,7 @@ function AccordionBlock() {
           <div className="flex items-center justify-between gap-4">
             <p className="text-sm font-medium">
               Environment variables
-              <span className="ml-2 font-normal text-muted-foreground">
+              <span className="ms-2 font-normal text-muted-foreground">
                 {environmentVariables.length}
               </span>
             </p>
@@ -705,7 +707,7 @@ function ScrollAreaBlock() {
       description="Scrolls a region inside the page with a styled scrollbar. Give it a fixed height or width."
     >
       <Example title="Vertical · audit log, 24 events" className="block">
-        <ScrollArea className="h-72 rounded-2xl border">
+        <ScrollArea aria-label="Audit log" className="h-72 rounded-2xl border">
           <div className="flex flex-col p-4">
             {auditLog.map((event, index) => (
               <React.Fragment key={event.id}>
@@ -724,7 +726,10 @@ function ScrollAreaBlock() {
         </ScrollArea>
       </Example>
       <Example title="Horizontal · preview thumbnails" className="block">
-        <ScrollArea className="w-full rounded-2xl border whitespace-nowrap">
+        <ScrollArea
+          aria-label="Preview thumbnails"
+          className="w-full rounded-2xl border whitespace-nowrap"
+        >
           <div className="flex w-max gap-4 p-4">
             {[210, 250, 30, 160, 330, 90].map((hue, index) => (
               <figure key={hue} className="flex w-44 shrink-0 flex-col gap-2">
@@ -758,7 +763,12 @@ function ResizableBlock() {
       className="lg:grid-cols-1"
     >
       <Example title="Typical · nested, with handles" className="block">
-        <ResizablePanelGroup orientation="horizontal" className="min-h-72 rounded-2xl border">
+        <ResizablePanelGroup
+          role="group"
+          aria-label="Files and preview"
+          orientation="horizontal"
+          className="min-h-72 rounded-2xl border"
+        >
           <ResizablePanel defaultSize="28%" minSize="18%">
             <div className="flex h-full flex-col gap-1 p-3 text-sm">
               <span className="px-2 pb-1 text-xs font-medium text-muted-foreground">Files</span>
@@ -773,15 +783,19 @@ function ResizableBlock() {
               ))}
             </div>
           </ResizablePanel>
-          <ResizableHandle withHandle />
+          <ResizableHandle withHandle aria-label="Resize files" />
           <ResizablePanel defaultSize="72%">
-            <ResizablePanelGroup orientation="vertical">
+            <ResizablePanelGroup
+              role="group"
+              aria-label="Preview and build output"
+              orientation="vertical"
+            >
               <ResizablePanel defaultSize="65%">
                 <div className="flex h-full items-center justify-center p-6 text-sm text-muted-foreground">
                   Preview of dashboard.example.com
                 </div>
               </ResizablePanel>
-              <ResizableHandle withHandle />
+              <ResizableHandle withHandle aria-label="Resize build output" />
               <ResizablePanel defaultSize="35%">
                 <div className="flex h-full flex-col gap-1 p-3 font-mono text-xs text-muted-foreground">
                   <span className="flex items-center gap-2 text-foreground">

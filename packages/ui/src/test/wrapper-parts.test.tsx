@@ -2,6 +2,7 @@ import { act, render, screen } from "@testing-library/react"
 import { userEvent } from "@testing-library/user-event"
 import { expect, test } from "vitest"
 
+import { Card, CardHeader, CardTitle } from "@ui-sdk-ds/ui/components/card"
 import { Checkbox, CheckboxGroup } from "@ui-sdk-ds/ui/components/checkbox"
 import { Command, CommandInput, CommandItems, CommandList } from "@ui-sdk-ds/ui/components/command"
 import {
@@ -19,7 +20,13 @@ import {
   DropdownMenuTrigger,
 } from "@ui-sdk-ds/ui/components/dropdown-menu"
 import { Field, FieldLabel } from "@ui-sdk-ds/ui/components/field"
-import { InputGroup, InputGroupClear, InputGroupInput } from "@ui-sdk-ds/ui/components/input-group"
+import {
+  Input,
+  InputClear,
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+} from "@ui-sdk-ds/ui/components/input"
 import {
   Popover,
   PopoverArrow,
@@ -27,7 +34,17 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@ui-sdk-ds/ui/components/popover"
+import {
+  Pagination,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationList,
+  PaginationNext,
+  PaginationPrevious,
+} from "@ui-sdk-ds/ui/components/pagination"
 import { ScrollArea, ScrollAreaScrollToEnd } from "@ui-sdk-ds/ui/components/scroll-area"
+import { Table, TableBody, TableCell, TableRow } from "@ui-sdk-ds/ui/components/table"
 import {
   Select,
   SelectClear,
@@ -144,7 +161,7 @@ test("command data shows shortcuts and opens pages", async () => {
   ]
   render(
     <Command items={items}>
-      <CommandInput placeholder="Search" />
+      <CommandInput aria-label="Search commands" placeholder="Search" />
       <CommandList>{(state) => <CommandItems items={state.items} />}</CommandList>
     </Command>,
   )
@@ -194,12 +211,26 @@ test("dropdown menu data renders items, checkboxes, radios and submenus", () => 
   )
 })
 
+test("pressing an input group's text focuses its input", async () => {
+  const user = userEvent.setup()
+  render(
+    <InputGroup>
+      <InputGroupAddon>
+        <InputGroupText>https://</InputGroupText>
+      </InputGroupAddon>
+      <Input aria-label="Website" />
+    </InputGroup>,
+  )
+  await user.click(screen.getByText("https://"))
+  expect(document.activeElement).toBe(screen.getByRole("textbox", { name: "Website" }))
+})
+
 test("an input group's clear button empties its input", async () => {
   const user = userEvent.setup()
   render(
     <InputGroup>
-      <InputGroupInput aria-label="Search" defaultValue="query" />
-      <InputGroupClear />
+      <Input aria-label="Search" defaultValue="query" />
+      <InputClear />
     </InputGroup>,
   )
   await user.click(await screen.findByRole("button", { name: "Clear" }))
@@ -292,4 +323,67 @@ test("a data select with search lists each item once and filters", async () => {
   expect(screen.getAllByRole("option", { name: "Frankfurt" })).toHaveLength(1)
   await user.keyboard("{ArrowDown}{Enter}")
   expect(screen.getByRole("combobox", { name: "Region" }).textContent).toBe("Frankfurt")
+})
+
+test("plain wrappers take render to change their element and keep their slot and classes", () => {
+  render(
+    <Card>
+      <CardHeader>
+        <CardTitle render={<h2 />} className="tracking-tight">
+          Usage
+        </CardTitle>
+      </CardHeader>
+      <Table>
+        <TableBody>
+          <TableRow>
+            <TableCell render={<th scope="row" />}>Builds</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+    </Card>,
+  )
+  const title = screen.getByRole("heading", { level: 2, name: "Usage" })
+  expect(title.dataset.slot).toBe("card-title")
+  expect(title.className).toContain("font-medium")
+  expect(title.className).toContain("tracking-tight")
+  const header = screen.getByRole("rowheader", { name: "Builds" })
+  expect(header.dataset.slot).toBe("table-cell")
+})
+
+test("pagination marks the current page, pages with its steps, and disables the ends", async () => {
+  const user = userEvent.setup()
+  const pages: Array<number> = []
+  render(
+    <Pagination pageCount={10} onPageChange={(page) => pages.push(page)}>
+      <PaginationList>
+        {({ items }) => (
+          <>
+            <PaginationItem>
+              <PaginationPrevious />
+            </PaginationItem>
+            {items.map((item) => (
+              <PaginationItem key={item}>
+                {typeof item === "number" ? <PaginationLink page={item} /> : <PaginationEllipsis />}
+              </PaginationItem>
+            ))}
+            <PaginationItem>
+              <PaginationNext />
+            </PaginationItem>
+          </>
+        )}
+      </PaginationList>
+    </Pagination>,
+  )
+  const nav = screen.getByRole("navigation", { name: "Pagination" })
+  const previous = screen.getByRole("button", { name: "Previous" })
+  expect(previous.getAttribute("aria-disabled")).toBe("true")
+  expect(screen.getByRole("button", { name: "1" }).getAttribute("aria-current")).toBe("page")
+  expect(nav.querySelector("[data-slot=pagination-ellipsis]")).not.toBeNull()
+
+  await user.click(previous)
+  expect(pages).toEqual([])
+  await user.click(screen.getByRole("button", { name: "Next" }))
+  expect(pages).toEqual([2])
+  expect(screen.getByRole("button", { name: "2" }).getAttribute("aria-current")).toBe("page")
+  expect(previous.hasAttribute("aria-disabled")).toBe(false)
 })

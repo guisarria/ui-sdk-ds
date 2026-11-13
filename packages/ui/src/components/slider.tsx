@@ -10,7 +10,7 @@ import {
   SliderValue as SliderValuePrimitive,
 } from "@ui-sdk/react/slider"
 import { cn } from "cn"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function Slider({
   className,
@@ -20,9 +20,7 @@ function Slider({
   max = 100,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof SliderPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof SliderPrimitive>>) {
   const _values = Array.isArray(value)
     ? value
     : Array.isArray(defaultValue)
@@ -60,10 +58,7 @@ function Slider({
   )
 }
 
-function SliderValue({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SliderValuePrimitive>, "className"> & { className?: string }) {
+function SliderValue({ className, ...props }: PrimitiveProps<typeof SliderValuePrimitive>) {
   return (
     <SliderValuePrimitive
       className={cn("text-sm text-muted-foreground tabular-nums", className)}

@@ -5,6 +5,8 @@ import { cn } from "cn"
 
 import { Button } from "@ui-sdk-ds/ui/components/button"
 import { CheckIcon, CopyIcon } from "lucide-react"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
+import type { RenderProps } from "@ui-sdk-ds/ui/lib/parts"
 
 const variants = {
   default: "bg-muted text-foreground ring-1 ring-foreground/5 dark:ring-foreground/10",
@@ -27,55 +29,72 @@ function CodeBlock({
   className,
   variant = "default",
   size = "default",
+  render,
   ...props
-}: React.ComponentProps<"div"> & CodeBlockVariants & { size?: "default" | "sm" }) {
-  return (
-    <div
-      data-slot="code-block"
-      data-variant={variant}
-      data-size={size}
-      className={cn(codeBlockVariants({ variant }), className)}
-      {...props}
-    />
+}: RenderProps<"div"> & CodeBlockVariants & { size?: "default" | "sm" }) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "code-block",
+        "data-variant": variant,
+        "data-size": size,
+        className: cn(codeBlockVariants({ variant }), className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function CodeBlockHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="code-block-header"
-      className={cn(
-        "flex min-w-0 shrink-0 items-center gap-2 px-4 pt-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pt-3 group-data-[variant=destructive]/code-block:text-destructive *:has-[>[data-slot=code-block-title]]:min-w-0",
-        className,
-      )}
-      {...props}
-    />
+function CodeBlockHeader({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "code-block-header",
+        className: cn(
+          "flex min-w-0 shrink-0 items-center gap-2 px-4 pt-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pt-3 group-data-[variant=destructive]/code-block:text-destructive *:has-[>[data-slot=code-block-title]]:min-w-0",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function CodeBlockTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="code-block-title"
-      className={cn(
-        "min-w-0 truncate font-sans text-sm font-medium text-foreground group-data-[size=sm]/code-block:text-xs group-data-[variant=destructive]/code-block:text-destructive [&_svg]:pointer-events-none [&_svg]:inline-block [&_svg]:align-middle [&_svg:not([class*='size-'])]:size-4 group-data-[size=sm]/code-block:[&_svg:not([class*='size-'])]:size-3.5 *:[svg]:me-1.5",
-        className,
-      )}
-      {...props}
-    />
+function CodeBlockTitle({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "code-block-title",
+        className: cn(
+          "min-w-0 truncate font-sans text-sm font-medium text-foreground group-data-[size=sm]/code-block:text-xs group-data-[variant=destructive]/code-block:text-destructive [&_svg]:pointer-events-none [&_svg]:inline-block [&_svg]:align-middle [&_svg:not([class*='size-'])]:size-4 group-data-[size=sm]/code-block:[&_svg:not([class*='size-'])]:size-3.5 *:[svg]:me-1.5",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function CodeBlockActions({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="code-block-actions"
-      className={cn(
-        "-my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1 *:data-[slot=button]:hover:bg-foreground/5 dark:*:data-[slot=button]:hover:bg-foreground/10 [[data-slot=code-block]>&]:absolute [[data-slot=code-block]>&]:inset-e-3 [[data-slot=code-block]>&]:top-3 [[data-slot=code-block]>&]:z-10 [[data-slot=code-block]>&]:m-0 [[data-slot=code-block]>&]:opacity-0 [[data-slot=code-block]>&]:transition-opacity [[data-slot=code-block]>&]:group-focus-within/code-block:opacity-100 [[data-slot=code-block]>&]:group-hover/code-block:opacity-100 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:inset-e-2 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:top-2 [[data-slot=code-block]>&]:pointer-coarse:opacity-100 [[data-slot=code-block]>&]:*:[button]:bg-background [[data-slot=code-block]>&]:*:[button]:ring-1 [[data-slot=code-block]>&]:*:[button]:ring-foreground/10",
-        className,
-      )}
-      {...props}
-    />
+function CodeBlockActions({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "code-block-actions",
+        className: cn(
+          "-my-1 ms-auto -me-1.5 flex shrink-0 items-center gap-1 *:data-[slot=button]:hover:bg-foreground/5 dark:*:data-[slot=button]:hover:bg-foreground/10 [[data-slot=code-block]>&]:absolute [[data-slot=code-block]>&]:inset-e-3 [[data-slot=code-block]>&]:top-3 [[data-slot=code-block]>&]:z-10 [[data-slot=code-block]>&]:m-0 [[data-slot=code-block]>&]:opacity-0 [[data-slot=code-block]>&]:transition-opacity [[data-slot=code-block]>&]:group-focus-within/code-block:opacity-100 [[data-slot=code-block]>&]:group-hover/code-block:opacity-100 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:inset-e-2 group-data-[size=sm]/code-block:[[data-slot=code-block]>&]:top-2 [[data-slot=code-block]>&]:pointer-coarse:opacity-100 [[data-slot=code-block]>&]:*:[button]:bg-background [[data-slot=code-block]>&]:*:[button]:ring-1 [[data-slot=code-block]>&]:*:[button]:ring-foreground/10",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
@@ -101,7 +120,6 @@ function CodeBlockCopyButton({
   return (
     <>
       <Button
-        data-slot="code-block-copy-button"
         data-copied={copied || undefined}
         variant={variant}
         size={size}
@@ -211,16 +229,20 @@ function CodeBlockLine({
   )
 }
 
-function CodeBlockFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="code-block-footer"
-      className={cn(
-        "flex min-w-0 shrink-0 items-center gap-2 px-4 pb-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pb-3",
-        className,
-      )}
-      {...props}
-    />
+function CodeBlockFooter({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "code-block-footer",
+        className: cn(
+          "flex min-w-0 shrink-0 items-center gap-2 px-4 pb-4 text-muted-foreground group-data-[size=sm]/code-block:px-3 group-data-[size=sm]/code-block:pb-3",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 

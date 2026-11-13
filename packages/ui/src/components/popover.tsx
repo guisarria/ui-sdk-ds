@@ -10,6 +10,8 @@ import {
 } from "@ui-sdk/react/popover"
 import { cn } from "cn"
 import { kbdClassName } from "@ui-sdk-ds/ui/components/kbd"
+import type { PrimitiveProps, RenderProps } from "@ui-sdk-ds/ui/lib/parts"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
 
 function PopoverContent({
   className,
@@ -18,9 +20,7 @@ function PopoverContent({
   side = "bottom",
   sideOffset = 4,
   ...props
-}: Omit<React.ComponentProps<typeof PopoverContentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof PopoverContentPrimitive>) {
   return (
     <PopoverContentPrimitive
       align={align}
@@ -36,38 +36,31 @@ function PopoverContent({
   )
 }
 
-function PopoverHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="popover-header"
-      className={cn("flex flex-col gap-1 text-sm", className)}
-      {...props}
-    />
+function PopoverHeader({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      { "data-slot": "popover-header", className: cn("flex flex-col gap-1 text-sm", className) },
+      props,
+    ),
+    render,
   )
 }
 
-function PopoverTitle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof PopoverTitlePrimitive>, "className"> & { className?: string }) {
+function PopoverTitle({ className, ...props }: PrimitiveProps<typeof PopoverTitlePrimitive>) {
   return <PopoverTitlePrimitive className={cn("text-base font-medium", className)} {...props} />
 }
 
 function PopoverDescription({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof PopoverDescriptionPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof PopoverDescriptionPrimitive>) {
   return (
     <PopoverDescriptionPrimitive className={cn("text-muted-foreground", className)} {...props} />
   )
 }
 
-function PopoverArrow({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof PopoverArrowPrimitive>, "className"> & { className?: string }) {
+function PopoverArrow({ className, ...props }: PrimitiveProps<typeof PopoverArrowPrimitive>) {
   return (
     <PopoverArrowPrimitive
       className={cn(
@@ -79,12 +72,7 @@ function PopoverArrow({
   )
 }
 
-function PopoverShortcut({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof PopoverShortcutPrimitive>, "className"> & {
-  className?: string
-}) {
+function PopoverShortcut({ className, ...props }: PrimitiveProps<typeof PopoverShortcutPrimitive>) {
   return <PopoverShortcutPrimitive className={cn(kbdClassName, className)} {...props} />
 }
 

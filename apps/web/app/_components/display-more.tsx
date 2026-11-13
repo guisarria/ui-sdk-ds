@@ -8,6 +8,7 @@ import {
   CommandList,
   type CommandData,
 } from "@ui-sdk-ds/ui/components/command"
+import { InputGroup, InputGroupAddon } from "@ui-sdk-ds/ui/components/input"
 import {
   Meter,
   MeterIndicator,
@@ -56,6 +57,7 @@ import {
   FolderIcon,
   ItalicIcon,
   Redo2Icon,
+  SearchIcon,
   UnderlineIcon,
   Undo2Icon,
 } from "lucide-react"
@@ -67,7 +69,7 @@ const commands: CommandData = [
     type: "group",
     label: "Project",
     items: [
-      { value: "deploy", label: "Deploy to production", shortcut: "alt+shift+d" },
+      { value: "deploy-prod", label: "Deploy to production", shortcut: "alt+shift+d" },
       { value: "logs", label: "Open logs", shortcut: "alt+shift+l" },
     ],
   },
@@ -244,7 +246,12 @@ function CommandDataBlock() {
     >
       <Example title="Pages and shortcuts" className="block">
         <Command items={commands} className="rounded-2xl border">
-          <CommandInput placeholder="Type a command…" />
+          <InputGroup>
+            <InputGroupAddon>
+              <SearchIcon />
+            </InputGroupAddon>
+            <CommandInput aria-label="Search commands" placeholder="Type a command…" />
+          </InputGroup>
           <CommandList>{(state) => <CommandItems items={state.items} />}</CommandList>
           <CommandEmpty>No commands found.</CommandEmpty>
         </Command>

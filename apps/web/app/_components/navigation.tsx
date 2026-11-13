@@ -75,10 +75,10 @@ import {
 } from "@ui-sdk-ds/ui/components/navigation-menu"
 import {
   Pagination,
-  PaginationContent,
   PaginationEllipsis,
   PaginationItem,
   PaginationLink,
+  PaginationList,
   PaginationNext,
   PaginationPrevious,
 } from "@ui-sdk-ds/ui/components/pagination"
@@ -141,7 +141,7 @@ function TabsBlock() {
     >
       <Example title="Typical · default list" className="block">
         <Tabs defaultValue="overview">
-          <TabsList>
+          <TabsList aria-label="Project">
             <TabsTrigger value="overview">Overview</TabsTrigger>
             <TabsTrigger value="deployments">Deployments</TabsTrigger>
             <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -159,9 +159,9 @@ function TabsBlock() {
       </Example>
       <Example title="Line · with icons and a count · scrolls when narrow" className="block">
         <Tabs defaultValue="activity">
-          <ScrollArea>
+          <ScrollArea aria-label="Team sections">
             <div className="pb-3">
-              <TabsList variant="line">
+              <TabsList variant="line" aria-label="Team">
                 <TabsTrigger value="activity">
                   <ActivityIcon />
                   Activity
@@ -172,8 +172,7 @@ function TabsBlock() {
                 </TabsTrigger>
                 <TabsTrigger value="members">
                   <UsersIcon />
-                  Members
-                  <Badge variant="secondary">5</Badge>
+                  Members <Badge variant="secondary">5</Badge>
                 </TabsTrigger>
                 <TabsTrigger value="billing" disabled>
                   <CreditCardIcon />
@@ -187,7 +186,7 @@ function TabsBlock() {
       </Example>
       <Example title="Vertical" className="block">
         <Tabs defaultValue="general" orientation="vertical">
-          <TabsList>
+          <TabsList aria-label="Settings">
             <TabsTrigger value="general">General</TabsTrigger>
             <TabsTrigger value="domains">Domains</TabsTrigger>
             <TabsTrigger value="variables">Environment variables</TabsTrigger>
@@ -209,7 +208,7 @@ function TabsBlock() {
           states={["default", "hover", "focus", "disabled"]}
           render={(variant, state) => (
             <Tabs defaultValue="logs">
-              <TabsList variant={variant}>
+              <TabsList variant={variant} aria-label="Log views">
                 <TabsTrigger value="logs">Logs</TabsTrigger>
                 <TabsTrigger value="usage" {...previewState(state)}>
                   Usage
@@ -288,6 +287,10 @@ function BreadcrumbBlock() {
 }
 
 function PaginationBlock() {
+  const [page, setPage] = React.useState(1)
+  const total = 593
+  const pageSize = 25
+
   return (
     <Block
       id="pagination"
@@ -295,51 +298,49 @@ function PaginationBlock() {
       description="Moves through long lists one page at a time. Keep the first and last page reachable."
     >
       <Example title="Typical · with ellipses">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious href="#pagination" />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#pagination">1</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#pagination">4</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#pagination" isActive>
-                5
-              </PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#pagination">6</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationEllipsis />
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationLink href="#pagination">24</PaginationLink>
-            </PaginationItem>
-            <PaginationItem>
-              <PaginationNext href="#pagination" />
-            </PaginationItem>
-          </PaginationContent>
+        <Pagination pageCount={24} defaultPage={5}>
+          <PaginationList>
+            {({ items }) => (
+              <>
+                <PaginationItem>
+                  <PaginationPrevious />
+                </PaginationItem>
+                {items.map((item) => (
+                  <PaginationItem key={item}>
+                    {typeof item === "number" ? (
+                      <PaginationLink page={item} />
+                    ) : (
+                      <PaginationEllipsis />
+                    )}
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext />
+                </PaginationItem>
+              </>
+            )}
+          </PaginationList>
         </Pagination>
       </Example>
       <Example title="Compact · previous and next only">
-        <Pagination className="justify-between">
-          <p className="text-sm text-muted-foreground">Showing 1–25 of 593 events</p>
-          <PaginationContent>
+        <Pagination
+          className="justify-between"
+          total={total}
+          pageSize={pageSize}
+          page={page}
+          onPageChange={setPage}
+        >
+          <p className="text-sm text-muted-foreground">
+            Showing {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, total)} of {total} events
+          </p>
+          <PaginationList>
             <PaginationItem>
-              <PaginationPrevious href="#pagination" text="Newer" />
+              <PaginationPrevious text="Newer" />
             </PaginationItem>
             <PaginationItem>
-              <PaginationNext href="#pagination" text="Older" />
+              <PaginationNext text="Older" />
             </PaginationItem>
-          </PaginationContent>
+          </PaginationList>
         </Pagination>
       </Example>
     </Block>
@@ -446,7 +447,7 @@ function MenubarBlock() {
       description="Desktop-style menus for editor-like tools. Every item needs a keyboard shortcut or a good reason not to have one."
     >
       <Example title="Typical · items, checkboxes, radios, submenu" wide>
-        <Menubar>
+        <Menubar aria-label="Editor">
           <MenubarMenu>
             <MenubarTrigger>File</MenubarTrigger>
             <MenubarContent>
@@ -472,7 +473,7 @@ function MenubarBlock() {
               </MenubarGroup>
               <MenubarSeparator />
               <MenubarGroup>
-                <MenubarItem variant="destructive">
+                <MenubarItem variant="destructive" data-agent-confirm="Deletes the project">
                   Delete project <MenubarShortcut>⌘⌫</MenubarShortcut>
                 </MenubarItem>
               </MenubarGroup>
@@ -531,7 +532,7 @@ function SidebarBlock() {
       <Example title="Typical · app shell" wide className="block p-0 sm:p-0">
         <div className="h-136 overflow-hidden rounded-2xl">
           <SidebarProvider className="h-full min-h-0">
-            <Sidebar collapsible="none" className="border-r">
+            <Sidebar collapsible="none" className="border-e">
               <SidebarHeader>
                 <SidebarMenu>
                   <SidebarMenuItem>
@@ -544,7 +545,7 @@ function SidebarBlock() {
                           <span className="truncate font-medium">Acme</span>
                           <span className="truncate text-xs text-muted-foreground">Pro plan</span>
                         </span>
-                        <ChevronsUpDownIcon className="ml-auto" />
+                        <ChevronsUpDownIcon className="ms-auto" />
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="start" className="w-56">
                         <DropdownMenuGroup>
@@ -659,7 +660,7 @@ function SidebarBlock() {
                   </SidebarMenuItem>
                   <SidebarMenuItem>
                     <SidebarMenuButton size="lg">
-                      <Avatar size="sm">
+                      <Avatar size="sm" aria-hidden="true">
                         <AvatarImage src={avatarSrc(200)} alt="" />
                         <AvatarFallback>AS</AvatarFallback>
                       </Avatar>
@@ -669,7 +670,7 @@ function SidebarBlock() {
                           ana@example.com
                         </span>
                       </span>
-                      <LogOutIcon className="ml-auto" />
+                      <LogOutIcon className="ms-auto" />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>

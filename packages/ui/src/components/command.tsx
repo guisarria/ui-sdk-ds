@@ -15,7 +15,7 @@ import {
   CommandStatus as CommandStatusPrimitive,
 } from "@ui-sdk/react/command"
 import { cn } from "cn"
-import { SearchIcon, CheckIcon } from "lucide-react"
+import { CheckIcon } from "lucide-react"
 
 import {
   Dialog,
@@ -24,18 +24,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@ui-sdk-ds/ui/components/dialog"
-import { InputGroup, InputGroupAddon } from "@ui-sdk-ds/ui/components/input-group"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import { inputClassName } from "@ui-sdk-ds/ui/components/input"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 import type { CommandData, CommandDataItem } from "@ui-sdk/react/command"
 
-function Command({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CommandPrimitive>, "className"> & { className?: string }) {
+function Command({ className, ...props }: PrimitiveProps<typeof CommandPrimitive>) {
   return (
     <CommandPrimitive
       className={cn(
-        "flex size-full flex-col overflow-hidden rounded-3xl bg-popover p-1 text-popover-foreground",
+        "flex size-full flex-col overflow-hidden rounded-3xl bg-popover p-1 text-popover-foreground *:data-[slot=input-group]:w-auto",
         className,
       )}
       {...props}
@@ -73,33 +70,11 @@ function CommandDialog({
   )
 }
 
-function CommandInput({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CommandInputPrimitive>, "className"> & { className?: string }) {
-  return (
-    <div data-slot="command-input-wrapper" className="p-1 pb-0">
-      <InputGroup className="h-8! bg-input/50">
-        <CommandInputPrimitive
-          aria-label={props.placeholder}
-          className={cn(
-            "w-full bg-transparent px-2.5 text-sm outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
-            className,
-          )}
-          {...props}
-        />
-        <InputGroupAddon>
-          <SearchIcon aria-hidden="true" className="size-4 shrink-0 opacity-50" />
-        </InputGroupAddon>
-      </InputGroup>
-    </div>
-  )
+function CommandInput({ className, ...props }: PrimitiveProps<typeof CommandInputPrimitive>) {
+  return <CommandInputPrimitive className={cn(inputClassName, className)} {...props} />
 }
 
-function CommandList({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CommandListPrimitive>, "className"> & { className?: string }) {
+function CommandList({ className, ...props }: PrimitiveProps<typeof CommandListPrimitive>) {
   return (
     <CommandListPrimitive
       className={cn(
@@ -111,10 +86,7 @@ function CommandList({
   )
 }
 
-function CommandEmpty({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CommandEmptyPrimitive>, "className"> & { className?: string }) {
+function CommandEmpty({ className, ...props }: PrimitiveProps<typeof CommandEmptyPrimitive>) {
   return <CommandEmptyPrimitive className={cn("py-6 text-center text-sm", className)} {...props} />
 }
 
@@ -123,9 +95,7 @@ function CommandGroup({
   heading,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof CommandGroupPrimitive>, "className"> & { className?: string }
-> & {
+}: WithNodeChildren<PrimitiveProps<typeof CommandGroupPrimitive>> & {
   heading?: React.ReactNode
 }) {
   return (
@@ -146,9 +116,7 @@ function CommandGroup({
 function CommandSeparator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof CommandSeparatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof CommandSeparatorPrimitive>) {
   return (
     <CommandSeparatorPrimitive className={cn("my-1 h-px bg-border/50", className)} {...props} />
   )
@@ -158,9 +126,7 @@ function CommandItem({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof CommandItemPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof CommandItemPrimitive>>) {
   return (
     <CommandItemPrimitive
       className={cn(
@@ -172,22 +138,17 @@ function CommandItem({
       {children}
       <CheckIcon
         aria-hidden="true"
-        className="ml-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100"
+        className="ms-auto opacity-0 group-has-data-[slot=command-shortcut]/command-item:hidden group-data-[checked=true]/command-item:opacity-100"
       />
     </CommandItemPrimitive>
   )
 }
 
-function CommandShortcut({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CommandShortcutPrimitive>, "className"> & {
-  className?: string
-}) {
+function CommandShortcut({ className, ...props }: PrimitiveProps<typeof CommandShortcutPrimitive>) {
   return (
     <CommandShortcutPrimitive
       className={cn(
-        "ml-auto text-xs tracking-widest text-muted-foreground group-data-highlighted/command-item:text-foreground",
+        "ms-auto text-xs tracking-widest text-muted-foreground group-data-highlighted/command-item:text-foreground",
         className,
       )}
       {...props}
@@ -195,12 +156,7 @@ function CommandShortcut({
   )
 }
 
-function CommandItemIcon({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CommandItemIconPrimitive>, "className"> & {
-  className?: string
-}) {
+function CommandItemIcon({ className, ...props }: PrimitiveProps<typeof CommandItemIconPrimitive>) {
   return (
     <CommandItemIconPrimitive
       className={cn("flex size-4 shrink-0 text-muted-foreground", className)}
@@ -209,12 +165,7 @@ function CommandItemIcon({
   )
 }
 
-function CommandStatus({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CommandStatusPrimitive>, "className"> & {
-  className?: string
-}) {
+function CommandStatus({ className, ...props }: PrimitiveProps<typeof CommandStatusPrimitive>) {
   return (
     <CommandStatusPrimitive
       className={cn("px-3 py-2 text-xs text-muted-foreground empty:hidden", className)}

@@ -8,7 +8,7 @@ import {
 import { cn } from "cn"
 
 import { toggleVariants, type ToggleVariants } from "@ui-sdk-ds/ui/components/toggle"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 const ToggleGroupContext = React.createContext<
   ToggleVariants & {
@@ -30,13 +30,16 @@ function ToggleGroup({
   orientation = "horizontal",
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ToggleGroupPrimitive>, "className"> & { className?: string }
-> &
+}: WithNodeChildren<PrimitiveProps<typeof ToggleGroupPrimitive>> &
   ToggleVariants & {
     spacing?: number
     orientation?: "horizontal" | "vertical"
   }) {
+  const context = React.useMemo(
+    () => ({ variant, size, spacing, orientation }),
+    [variant, size, spacing, orientation],
+  )
+
   return (
     <ToggleGroupPrimitive
       data-variant={variant}
@@ -50,9 +53,7 @@ function ToggleGroup({
       )}
       {...props}
     >
-      <ToggleGroupContext.Provider value={{ variant, size, spacing, orientation }}>
-        {children}
-      </ToggleGroupContext.Provider>
+      <ToggleGroupContext value={context}>{children}</ToggleGroupContext>
     </ToggleGroupPrimitive>
   )
 }
@@ -63,10 +64,8 @@ function ToggleGroupItem({
   variant = "default",
   size = "default",
   ...props
-}: Omit<React.ComponentProps<typeof TogglePrimitive>, "className"> & {
-  className?: string
-} & ToggleVariants) {
-  const context = React.useContext(ToggleGroupContext)
+}: PrimitiveProps<typeof TogglePrimitive> & ToggleVariants) {
+  const context = React.use(ToggleGroupContext)
 
   return (
     <TogglePrimitive
@@ -74,7 +73,7 @@ function ToggleGroupItem({
       data-size={context.size || size}
       data-spacing={context.spacing}
       className={cn(
-        "shrink-0 group-data-[spacing=0]/toggle-group:rounded-none group-data-[spacing=0]/toggle-group:px-2 group-data-[spacing=0]/toggle-group:shadow-none focus:z-10 focus-visible:z-10 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-end]:pr-1.5 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-start]:pl-1.5 data-pressed:bg-muted group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:first:rounded-l-2xl group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:first:rounded-t-2xl group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:last:rounded-r-2xl group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:last:rounded-b-2xl group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:data-[variant=outline]:border-l-0 group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-l group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
+        "shrink-0 group-data-[spacing=0]/toggle-group:rounded-none group-data-[spacing=0]/toggle-group:px-2 group-data-[spacing=0]/toggle-group:shadow-none focus:z-10 focus-visible:z-10 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-end]:pe-1.5 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-start]:ps-1.5 data-pressed:bg-muted group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:first:rounded-s-2xl group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:first:rounded-t-2xl group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:last:rounded-e-2xl group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:last:rounded-b-2xl group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:data-[variant=outline]:border-s-0 group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:data-[variant=outline]:border-t-0 group-data-[orientation=horizontal]/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-s group-data-[orientation=vertical]/toggle-group:data-[spacing=0]:data-[variant=outline]:first:border-t",
         toggleVariants({
           variant: context.variant || variant,
           size: context.size || size,

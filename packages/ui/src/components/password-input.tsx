@@ -10,7 +10,7 @@ import { cn } from "cn"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function PasswordInput({
   className,
@@ -18,9 +18,7 @@ function PasswordInput({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof PasswordInputPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof PasswordInputPrimitive>>) {
   const named = children === undefined
   return (
     <PasswordInputPrimitive
@@ -45,9 +43,7 @@ function PasswordInput({
 function PasswordInputControl({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof PasswordInputControlPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof PasswordInputControlPrimitive>) {
   return (
     <PasswordInputControlPrimitive
       className={cn(
@@ -63,11 +59,7 @@ function PasswordInputToggle({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof PasswordInputTogglePrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof PasswordInputTogglePrimitive>>) {
   return (
     <PasswordInputTogglePrimitive
       aria-label="Show password"

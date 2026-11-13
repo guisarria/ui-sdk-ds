@@ -107,7 +107,6 @@ function EventCalendarNavToday({ className, render, children, tooltip, ...props 
       <Button
         variant={nav.variant}
         size={nav.size}
-        data-slot="event-calendar-nav-today"
         data-active={isToday || undefined}
         className={cn(nav.className, className)}
         onClick={today}
@@ -129,7 +128,6 @@ function EventCalendarNavPrev({ className, render, children, tooltip, ...props }
       <Button
         variant={nav.variant}
         size={nav.iconSize}
-        data-slot="event-calendar-nav-prev"
         aria-label={settings.i18n.labels.previous}
         className={cn(nav.className, className)}
         onClick={prev}
@@ -151,7 +149,6 @@ function EventCalendarNavNext({ className, render, children, tooltip, ...props }
       <Button
         variant={nav.variant}
         size={nav.iconSize}
-        data-slot="event-calendar-nav-next"
         aria-label={settings.i18n.labels.next}
         className={cn(nav.className, className)}
         onClick={next}
@@ -242,7 +239,6 @@ function EventCalendarViewSwitcher({
                 <Button
                   variant={nav.variant}
                   size={nav.size}
-                  data-slot="event-calendar-view-switcher"
                   aria-label={labels.selectView}
                   className={cn("gap-1", nav.className, className)}
                   render={render}
@@ -367,7 +363,6 @@ function EventCalendarDatePicker({
             <Button
               variant={nav.variant}
               size={nav.iconSize}
-              data-slot="event-calendar-date-picker"
               data-mode={resolved}
               aria-label={settings.i18n.labels.goToDate}
               className={cn(nav.className, className)}

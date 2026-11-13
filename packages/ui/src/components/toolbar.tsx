@@ -12,13 +12,11 @@ import {
 import { cn } from "cn"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 type ButtonVariantProps = NonNullable<Parameters<typeof buttonVariants>[0]>
 
-function Toolbar({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToolbarPrimitive>, "className"> & { className?: string }) {
+function Toolbar({ className, ...props }: PrimitiveProps<typeof ToolbarPrimitive>) {
   return (
     <ToolbarPrimitive
       className={cn(
@@ -35,9 +33,7 @@ function ToolbarButton({
   variant = "ghost",
   size = "sm",
   ...props
-}: Omit<React.ComponentProps<typeof ToolbarButtonPrimitive>, "className"> & {
-  className?: string
-} & Pick<ButtonVariantProps, "variant" | "size">) {
+}: PrimitiveProps<typeof ToolbarButtonPrimitive> & Pick<ButtonVariantProps, "variant" | "size">) {
   return (
     <ToolbarButtonPrimitive
       data-variant={variant}
@@ -48,10 +44,7 @@ function ToolbarButton({
   )
 }
 
-function ToolbarLink({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToolbarLinkPrimitive>, "className"> & { className?: string }) {
+function ToolbarLink({ className, ...props }: PrimitiveProps<typeof ToolbarLinkPrimitive>) {
   return (
     <ToolbarLinkPrimitive
       className={cn(buttonVariants({ variant: "link", size: "sm" }), className)}
@@ -60,10 +53,7 @@ function ToolbarLink({
   )
 }
 
-function ToolbarInput({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToolbarInputPrimitive>, "className"> & { className?: string }) {
+function ToolbarInput({ className, ...props }: PrimitiveProps<typeof ToolbarInputPrimitive>) {
   return (
     <ToolbarInputPrimitive
       className={cn(
@@ -75,10 +65,7 @@ function ToolbarInput({
   )
 }
 
-function ToolbarGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof ToolbarGroupPrimitive>, "className"> & { className?: string }) {
+function ToolbarGroup({ className, ...props }: PrimitiveProps<typeof ToolbarGroupPrimitive>) {
   return (
     <ToolbarGroupPrimitive
       className={cn(
@@ -93,9 +80,7 @@ function ToolbarGroup({
 function ToolbarSeparator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof ToolbarSeparatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ToolbarSeparatorPrimitive>) {
   return (
     <ToolbarSeparatorPrimitive
       className={cn(

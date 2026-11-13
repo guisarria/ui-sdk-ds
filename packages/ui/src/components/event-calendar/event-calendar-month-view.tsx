@@ -2,7 +2,6 @@
 
 import {
   useCallback,
-  useEffect,
   useId,
   useLayoutEffect,
   useMemo,
@@ -53,8 +52,6 @@ import { Popover, PopoverContent, PopoverTrigger } from "@ui-sdk-ds/ui/component
 import { ScrollArea } from "@ui-sdk-ds/ui/components/scroll-area"
 import type { RenderProps } from "@ui-sdk-ds/ui/lib/parts"
 import { PlusIcon } from "lucide-react"
-
-const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect
 
 let focusedChip: {
   node: HTMLElement
@@ -144,13 +141,9 @@ function EventCalendarMonthView({
     const gap = Number.parseFloat(cs.rowGap) || 0
     setAutoCap(Math.max(1, Math.floor((inner + gap) / laneH)))
   }, [])
-  useIsoLayoutEffect(() => {
-    if (!autoFit) {
-      setAutoCap(null)
-      return
-    }
+  useLayoutEffect(() => {
     const content = contentProbeRef.current
-    if (!content || typeof ResizeObserver === "undefined") return
+    if (!autoFit || !content || typeof ResizeObserver === "undefined") return
     measureCap()
     const observer = new ResizeObserver(measureCap)
     observer.observe(content)
@@ -161,7 +154,7 @@ function EventCalendarMonthView({
   const defaultProps = {
     "data-slot": "event-calendar-month-view",
     "data-view": "month",
-    role: "grid",
+    role: "group",
     "aria-label": title,
     className: cn(
       "flex flex-col border-t",
@@ -172,22 +165,17 @@ function EventCalendarMonthView({
     children: (
       <>
         <div
-          role="row"
+          aria-hidden
           data-slot="event-calendar-month-header"
           className={cn("@container grid border-b", viewConfig.classNames?.monthHeader)}
           style={{ gridTemplateColumns }}
         >
           {effective.weekNumbers && (
-            <div
-              role="columnheader"
-              aria-hidden
-              className={cn("border-e px-2 py-1.5", viewConfig.classNames?.weekNumber)}
-            />
+            <div className={cn("border-e px-2 py-1.5", viewConfig.classNames?.weekNumber)} />
           )}
           {headerDays.map((day) => (
             <div
               key={day.getTime()}
-              role="columnheader"
               className={cn(
                 "truncate px-2 py-1.5 font-medium text-muted-foreground",
                 viewConfig.classNames?.monthDayHeader,
@@ -227,7 +215,7 @@ function EventCalendarMonthView({
         >
           {weeks.map((week, rowIndex) => (
             <EventCalendarMonthWeek
-              key={rowIndex}
+              key={week[0]!.getTime()}
               week={week}
               gridTemplateColumns={gridTemplateColumns}
               showWeekNumber={effective.weekNumbers}
@@ -249,9 +237,9 @@ function EventCalendarMonthView({
   }
 
   return (
-    <EventCalendarViewContext.Provider value={{ view: "month" }}>
+    <EventCalendarViewContext value="month">
       {renderElement("div", mergeProps(defaultProps, props), render)}
-    </EventCalendarViewContext.Provider>
+    </EventCalendarViewContext>
   )
 }
 
@@ -369,7 +357,6 @@ function EventCalendarMonthWeek({
 
   return (
     <div
-      role="row"
       data-slot="event-calendar-month-row"
       className={cn(
         "relative grid min-h-0 border-b last:border-b-0",
@@ -379,7 +366,6 @@ function EventCalendarMonthWeek({
     >
       {showWeekNumber && (
         <div
-          role="rowheader"
           data-slot="event-calendar-week-number"
           className={cn(
             "border-e px-2 pt-1 text-muted-foreground tabular-nums",
@@ -639,9 +625,17 @@ function EventCalendarMonthCell({
   }
 
   const rootRef = useRef<HTMLDivElement | null>(null)
-  useIsoLayoutEffect(() => {
+  useLayoutEffect(() => {
     restoreChipFocus(rootRef.current, visibleTimed)
   })
+
+  const dayLabel = format(
+    toZoned(day, settings.timeZone),
+    settings.i18n.formats.monthCellAriaLabel,
+    {
+      locale: settings.locale,
+    },
+  )
 
   const dropPlaceholder = inlineDrop ? (
     <div
@@ -727,7 +721,7 @@ function EventCalendarMonthCell({
           <button
             type="button"
             data-slot="event-calendar-day-add"
-            aria-label={settings.i18n.labels.addEvent}
+            aria-label={settings.i18n.labels.addEvent(dayLabel)}
             className={cn(
               "flex size-5 cursor-pointer items-center justify-center rounded-sm bg-primary text-primary-foreground opacity-0 transition-opacity group-hover/ec-cell:opacity-100 focus-visible:opacity-100",
               viewConfig.classNames?.dayAddButton,
@@ -770,7 +764,7 @@ function EventCalendarMonthCell({
   return (
     <div
       ref={rootRef}
-      role="gridcell"
+      role="group"
       data-slot="event-calendar-month-cell"
       data-today={isToday || undefined}
       data-outside={isOutside || undefined}
@@ -781,11 +775,7 @@ function EventCalendarMonthCell({
       data-drop-target={isDropTarget ?? undefined}
       data-off={isOff || undefined}
       data-draft={inDraft ? "" : undefined}
-      aria-label={format(
-        toZoned(day, settings.timeZone),
-        settings.i18n.formats.monthCellAriaLabel,
-        { locale: settings.locale },
-      )}
+      aria-label={dayLabel}
       className={cn(
         "group/ec-cell relative flex min-h-0 min-w-0 flex-col overflow-hidden",
         !isLast && "border-e",
@@ -884,6 +874,11 @@ function EventCalendarMoreIndicator({
               } as CSSProperties)
             : undefined
         }
+        aria-label={
+          viewConfig.renderMoreIndicator
+            ? undefined
+            : `${settings.i18n.labels.more(count)}, ${format(toZoned(day, settings.timeZone), settings.i18n.formats.monthCellAriaLabel, { locale: settings.locale })}`
+        }
         onClick={(e: React.MouseEvent) => {
           e.stopPropagation()
           const verdict = settings.onMoreClick?.(
@@ -901,7 +896,6 @@ function EventCalendarMoreIndicator({
           settings.i18n.labels.more(count)}
       </PopoverTrigger>
       <PopoverContent
-        data-slot="event-calendar-more-popover"
         align={viewConfig.morePopoverAlign}
         aria-labelledby={viewConfig.renderMoreContent ? undefined : headerId}
         aria-label={

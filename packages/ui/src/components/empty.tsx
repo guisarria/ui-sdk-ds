@@ -1,25 +1,35 @@
 import { cn } from "cn"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
+import type { RenderProps } from "@ui-sdk-ds/ui/lib/parts"
 
-function Empty({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="empty"
-      className={cn(
-        "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-3xl border-dashed p-12 text-center text-balance",
-        className,
-      )}
-      {...props}
-    />
+function Empty({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "empty",
+        className: cn(
+          "flex w-full min-w-0 flex-1 flex-col items-center justify-center gap-4 rounded-3xl border-dashed p-12 text-center text-balance",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function EmptyHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="empty-header"
-      className={cn("flex max-w-sm flex-col items-center gap-2", className)}
-      {...props}
-    />
+function EmptyHeader({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "empty-header",
+        className: cn("flex max-w-sm flex-col items-center gap-2", className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
@@ -42,51 +52,68 @@ function emptyMediaVariants({ variant = "default" }: EmptyMediaVariants = {}) {
 function EmptyMedia({
   className,
   variant = "default",
+  render,
   ...props
-}: React.ComponentProps<"div"> & EmptyMediaVariants) {
-  return (
-    <div
-      data-slot="empty-icon"
-      data-variant={variant}
-      className={cn(emptyMediaVariants({ variant }), className)}
-      {...props}
-    />
+}: RenderProps<"div"> & EmptyMediaVariants) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "empty-icon",
+        "data-variant": variant,
+        className: cn(emptyMediaVariants({ variant }), className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function EmptyTitle({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="empty-title"
-      className={cn("font-heading text-lg font-medium tracking-tight", className)}
-      {...props}
-    />
+function EmptyTitle({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "empty-title",
+        className: cn("font-heading text-lg font-medium tracking-tight", className),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function EmptyDescription({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <div
-      data-slot="empty-description"
-      className={cn(
-        "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
-        className,
-      )}
-      {...props}
-    />
+function EmptyDescription({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "empty-description",
+        className: cn(
+          "text-sm/relaxed text-muted-foreground [&>a]:underline [&>a]:underline-offset-4 [&>a:hover]:text-primary",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 
-function EmptyContent({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="empty-content"
-      className={cn(
-        "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
-        className,
-      )}
-      {...props}
-    />
+function EmptyContent({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      {
+        "data-slot": "empty-content",
+        className: cn(
+          "flex w-full max-w-sm min-w-0 flex-col items-center gap-4 text-sm text-balance",
+          className,
+        ),
+      },
+      props,
+    ),
+    render,
   )
 }
 

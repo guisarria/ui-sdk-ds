@@ -8,7 +8,9 @@ import {
   AutocompleteInput,
   AutocompleteItem,
   AutocompleteList,
+  AutocompleteTrigger,
 } from "@ui-sdk-ds/ui/components/autocomplete"
+import { InputGroup } from "@ui-sdk-ds/ui/components/input"
 import {
   ColorPicker,
   ColorPickerArea,
@@ -124,7 +126,10 @@ test("autocomplete, file input and token input render", () => {
   const { container } = render(
     <>
       <Autocomplete>
-        <AutocompleteInput aria-label="Fruit" showTrigger />
+        <InputGroup>
+          <AutocompleteInput aria-label="Fruit" />
+          <AutocompleteTrigger />
+        </InputGroup>
         <AutocompleteContent>
           <AutocompleteList>
             <AutocompleteItem value="Apple">Apple</AutocompleteItem>
@@ -143,6 +148,7 @@ test("autocomplete, file input and token input render", () => {
     </>,
   )
   expect(screen.getByRole("combobox", { name: "Fruit" })).not.toBeNull()
+  expect(screen.getByRole("button", { name: "Show suggestions" })).not.toBeNull()
   expect(screen.getByRole("button", { name: "Browse files" })).not.toBeNull()
   expect(container.querySelector("[data-slot=token-input-editor]")?.textContent).toContain("a.ts")
 })

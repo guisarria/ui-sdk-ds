@@ -14,18 +14,10 @@ import { kbdClassName } from "@ui-sdk-ds/ui/components/kbd"
 
 import { Button } from "@ui-sdk-ds/ui/components/button"
 import { XIcon } from "lucide-react"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, RenderProps } from "@ui-sdk-ds/ui/lib/parts"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
 
-function DialogPortal({ children }: { children?: React.ReactNode }) {
-  return children
-}
-
-function DialogOverlay({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DialogPrimitiveBackdrop>, "className"> & {
-  className?: string
-}) {
+function DialogOverlay({ className, ...props }: PrimitiveProps<typeof DialogPrimitiveBackdrop>) {
   return (
     <DialogPrimitiveBackdrop
       className={cn(
@@ -37,49 +29,59 @@ function DialogOverlay({
   )
 }
 
-function DialogContent({
+function DialogContent<Payload = unknown>({
   className,
   children,
   showCloseButton = true,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof DialogPrimitiveContent>, "className"> & { className?: string }
-> & {
+}: PrimitiveProps<typeof DialogPrimitiveContent<Payload>> & {
   showCloseButton?: boolean
 }) {
+  const closeButton = showCloseButton ? (
+    <DialogPrimitiveClose
+      render={<Button variant="ghost" className="absolute inset-e-4 top-4 bg-secondary" size="icon-sm" />}
+    >
+      <XIcon />
+      <span className="sr-only">Close</span>
+    </DialogPrimitiveClose>
+  ) : null
+
   return (
     <>
       <DialogOverlay />
-      <DialogPrimitiveContent
+      <DialogPrimitiveContent<Payload>
         className={cn(
           "fixed inset-0 m-auto grid h-fit max-h-[calc(100%-2rem)] w-full max-w-[calc(100%-2rem)] gap-6 rounded-[min(var(--radius-4xl),24px)] bg-popover p-6 text-sm text-popover-foreground shadow-xl ring-1 ring-foreground/5 transition-[opacity,scale,translate] duration-100 outline-none data-ending-style:scale-95 data-ending-style:opacity-0 data-starting-style:scale-95 data-starting-style:opacity-0 motion-reduce:transition-none sm:max-w-md dark:ring-foreground/10",
           className,
         )}
         {...props}
       >
-        {children}
-        {showCloseButton && (
-          <DialogPrimitiveClose
-            render={
-              <Button
-                variant="ghost"
-                className="absolute top-4 right-4 bg-secondary"
-                size="icon-sm"
-              />
-            }
-          >
-            <XIcon />
-            <span className="sr-only">Close</span>
-          </DialogPrimitiveClose>
+        {typeof children === "function" ? (
+          (state) => (
+            <>
+              {children(state)}
+              {closeButton}
+            </>
+          )
+        ) : (
+          <>
+            {children}
+            {closeButton}
+          </>
         )}
       </DialogPrimitiveContent>
     </>
   )
 }
 
-function DialogHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div data-slot="dialog-header" className={cn("flex flex-col gap-1.5", className)} {...props} />
+function DialogHeader({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      { "data-slot": "dialog-header", className: cn("flex flex-col gap-1.5", className) },
+      props,
+    ),
+    render,
   )
 }
 
@@ -105,10 +107,7 @@ function DialogFooter({
   )
 }
 
-function DialogTitle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DialogPrimitiveTitle>, "className"> & { className?: string }) {
+function DialogTitle({ className, ...props }: PrimitiveProps<typeof DialogPrimitiveTitle>) {
   return (
     <DialogPrimitiveTitle
       className={cn("font-heading text-base leading-none font-medium", className)}
@@ -120,9 +119,7 @@ function DialogTitle({
 function DialogDescription({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof DialogPrimitiveDescription>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof DialogPrimitiveDescription>) {
   return (
     <DialogPrimitiveDescription
       className={cn(
@@ -134,12 +131,7 @@ function DialogDescription({
   )
 }
 
-function DialogShortcut({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DialogShortcutPrimitive>, "className"> & {
-  className?: string
-}) {
+function DialogShortcut({ className, ...props }: PrimitiveProps<typeof DialogShortcutPrimitive>) {
   return <DialogShortcutPrimitive className={cn(kbdClassName, className)} {...props} />
 }
 
@@ -149,7 +141,6 @@ export {
   DialogFooter,
   DialogHeader,
   DialogOverlay,
-  DialogPortal,
   DialogTitle,
   DialogShortcut,
 }

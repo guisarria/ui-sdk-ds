@@ -2,12 +2,15 @@
 
 import {
   Autocomplete,
+  AutocompleteClear,
   AutocompleteContent,
   AutocompleteEmpty,
   AutocompleteInput,
   AutocompleteItem,
   AutocompleteList,
+  AutocompleteTrigger,
 } from "@ui-sdk-ds/ui/components/autocomplete"
+import { InputGroup } from "@ui-sdk-ds/ui/components/input"
 import { Checkbox, CheckboxGroup } from "@ui-sdk-ds/ui/components/checkbox"
 import {
   ColorPicker,
@@ -191,7 +194,7 @@ function SearchableSelectBlock() {
       <Example title="Checkbox group · one name, many values" className="block">
         <FieldSet>
           <FieldLegend variant="label">Notify me about</FieldLegend>
-          <CheckboxGroup name="notify" defaultValue={["deploys"]}>
+          <CheckboxGroup name="notify" aria-label="Notify me about" defaultValue={["deploys"]}>
             {[
               ["deploys", "Deploys"],
               ["incidents", "Incidents"],
@@ -220,7 +223,11 @@ function AutocompleteBlock() {
         <Field name="framework">
           <FieldLabel>Framework</FieldLabel>
           <Autocomplete>
-            <AutocompleteInput placeholder="Type or choose" showTrigger showClear />
+            <InputGroup>
+              <AutocompleteInput placeholder="Type or choose" />
+              <AutocompleteClear />
+              <AutocompleteTrigger />
+            </InputGroup>
             <AutocompleteContent>
               <AutocompleteList>
                 {frameworks.map((framework) => (

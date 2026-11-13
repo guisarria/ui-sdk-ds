@@ -17,6 +17,7 @@ import { cn } from "cn"
 import { ChevronLeftIcon, ChevronRightIcon, PauseIcon, PlayIcon } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 type CarouselOptions = Pick<
   React.ComponentProps<typeof CarouselPrimitive>,
@@ -27,7 +28,7 @@ function Carousel({
   opts,
   className,
   ...props
-}: Omit<React.ComponentProps<typeof CarouselPrimitive>, "className"> & { className?: string } & {
+}: PrimitiveProps<typeof CarouselPrimitive> & {
   opts?: CarouselOptions
 }) {
   return (
@@ -35,17 +36,12 @@ function Carousel({
   )
 }
 
-function CarouselContent({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CarouselContentPrimitive>, "className"> & {
-  className?: string
-}) {
+function CarouselContent({ className, ...props }: PrimitiveProps<typeof CarouselContentPrimitive>) {
   return (
     <CarouselViewportPrimitive className="scrollbar-none">
       <CarouselContentPrimitive
         className={cn(
-          "flex data-[orientation=horizontal]:-ml-4 data-[orientation=vertical]:-mt-4 data-[orientation=vertical]:flex-col",
+          "flex data-[orientation=horizontal]:-ms-4 data-[orientation=vertical]:-mt-4 data-[orientation=vertical]:flex-col",
           className,
         )}
         {...props}
@@ -54,14 +50,11 @@ function CarouselContent({
   )
 }
 
-function CarouselItem({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof CarouselItemPrimitive>, "className"> & { className?: string }) {
+function CarouselItem({ className, ...props }: PrimitiveProps<typeof CarouselItemPrimitive>) {
   return (
     <CarouselItemPrimitive
       className={cn(
-        "min-w-0 shrink-0 grow-0 basis-full data-[orientation=horizontal]:pl-4 data-[orientation=vertical]:pt-4",
+        "min-w-0 shrink-0 grow-0 basis-full data-[orientation=horizontal]:ps-4 data-[orientation=vertical]:pt-4",
         className,
       )}
       {...props}
@@ -77,18 +70,13 @@ const carouselButtonClassName = cn(
 function CarouselPrevious({
   className,
   ...props
-}: Omit<
-  Omit<React.ComponentProps<typeof CarouselPreviousPrimitive>, "className"> & {
-    className?: string
-  },
-  "children"
->) {
+}: Omit<PrimitiveProps<typeof CarouselPreviousPrimitive>, "children">) {
   return (
     <CarouselPreviousPrimitive
       aria-label="Previous slide"
       className={cn(
         carouselButtonClassName,
-        "group-data-[orientation=horizontal]/carousel:inset-y-0 group-data-[orientation=horizontal]/carousel:-left-12 group-data-[orientation=horizontal]/carousel:my-auto group-data-[orientation=vertical]/carousel:-top-12 group-data-[orientation=vertical]/carousel:left-1/2 group-data-[orientation=vertical]/carousel:-translate-x-1/2 group-data-[orientation=vertical]/carousel:rotate-90",
+        "group-data-[orientation=horizontal]/carousel:inset-y-0 group-data-[orientation=horizontal]/carousel:-start-12 group-data-[orientation=horizontal]/carousel:my-auto group-data-[orientation=vertical]/carousel:-top-12 group-data-[orientation=vertical]/carousel:left-1/2 group-data-[orientation=vertical]/carousel:-translate-x-1/2 group-data-[orientation=vertical]/carousel:rotate-90",
         className,
       )}
       {...props}
@@ -101,16 +89,13 @@ function CarouselPrevious({
 function CarouselNext({
   className,
   ...props
-}: Omit<
-  Omit<React.ComponentProps<typeof CarouselNextPrimitive>, "className"> & { className?: string },
-  "children"
->) {
+}: Omit<PrimitiveProps<typeof CarouselNextPrimitive>, "children">) {
   return (
     <CarouselNextPrimitive
       aria-label="Next slide"
       className={cn(
         carouselButtonClassName,
-        "group-data-[orientation=horizontal]/carousel:inset-y-0 group-data-[orientation=horizontal]/carousel:-right-12 group-data-[orientation=horizontal]/carousel:my-auto group-data-[orientation=vertical]/carousel:-bottom-12 group-data-[orientation=vertical]/carousel:left-1/2 group-data-[orientation=vertical]/carousel:-translate-x-1/2 group-data-[orientation=vertical]/carousel:rotate-90",
+        "group-data-[orientation=horizontal]/carousel:inset-y-0 group-data-[orientation=horizontal]/carousel:-end-12 group-data-[orientation=horizontal]/carousel:my-auto group-data-[orientation=vertical]/carousel:-bottom-12 group-data-[orientation=vertical]/carousel:left-1/2 group-data-[orientation=vertical]/carousel:-translate-x-1/2 group-data-[orientation=vertical]/carousel:rotate-90",
         className,
       )}
       {...props}
@@ -124,9 +109,7 @@ function CarouselIndicators({
   className,
   children,
   ...props
-}: Omit<React.ComponentProps<typeof CarouselIndicatorGroupPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof CarouselIndicatorGroupPrimitive>) {
   return (
     <CarouselIndicatorGroupPrimitive
       aria-label="Choose a slide"
@@ -145,9 +128,7 @@ function CarouselIndicators({
 function CarouselIndicator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof CarouselIndicatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof CarouselIndicatorPrimitive>) {
   return (
     <CarouselIndicatorPrimitive
       className={cn(
@@ -163,9 +144,7 @@ function CarouselPlayToggle({
   className,
   children,
   ...props
-}: Omit<React.ComponentProps<typeof CarouselPlayTogglePrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof CarouselPlayTogglePrimitive>) {
   return (
     <CarouselPlayTogglePrimitive
       aria-label="Autoplay"

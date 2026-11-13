@@ -19,10 +19,8 @@ import {
   FieldLegend,
   FieldSet,
 } from "@ui-sdk-ds/ui/components/field"
-import { Input } from "@ui-sdk-ds/ui/components/input"
-import { InputGroup, InputGroupInput } from "@ui-sdk-ds/ui/components/input-group"
+import { Input, InputGroup } from "@ui-sdk-ds/ui/components/input"
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@ui-sdk-ds/ui/components/input-otp"
-import { NativeSelect, NativeSelectOption } from "@ui-sdk-ds/ui/components/native-select"
 import { RadioGroup, RadioGroupItem } from "@ui-sdk-ds/ui/components/radio-group"
 import {
   Select,
@@ -38,24 +36,15 @@ import { Textarea } from "@ui-sdk-ds/ui/components/textarea"
 const labelled: Array<[string, string, () => ReactNode]> = [
   ["Input", "textbox", () => <Input />],
   [
-    "InputGroupInput",
+    "Input in an InputGroup",
     "textbox",
     () => (
       <InputGroup>
-        <InputGroupInput />
+        <Input />
       </InputGroup>
     ),
   ],
   ["Textarea", "textbox", () => <Textarea />],
-  [
-    "NativeSelect",
-    "combobox",
-    () => (
-      <NativeSelect>
-        <NativeSelectOption value="a">A</NativeSelectOption>
-      </NativeSelect>
-    ),
-  ],
   [
     "Select",
     "combobox",
@@ -154,7 +143,7 @@ test("clicking a label focuses a text control and toggles a checkbox or switch",
   )
 })
 
-test("an invalid Field shows its error and marks the control invalid", () => {
+test("an invalid Field shows its error and describes the control with it", () => {
   render(
     <Field invalid>
       <FieldLabel>Domain</FieldLabel>
@@ -163,20 +152,22 @@ test("an invalid Field shows its error and marks the control invalid", () => {
     </Field>,
   )
   const input = screen.getByRole("textbox", { name: "Domain" })
+  const error = screen.getByText("Domains can’t contain spaces.")
   expect(input.getAttribute("aria-invalid")).toBe("true")
-  expect(screen.getByRole("alert").textContent).toBe("Domains can’t contain spaces.")
-  expect(input.getAttribute("aria-describedby")).toContain(screen.getByRole("alert").id)
+  expect(error.dataset.slot).toBe("field-error")
+  expect(input.getAttribute("aria-describedby")?.split(" ")).toContain(error.id)
 })
 
-test("a FieldError renders nothing without a message, and lists unique errors", () => {
+test("a FieldError stays hidden until its field is invalid, and lists unique errors", () => {
   const { rerender } = render(
     <Field>
       <FieldLabel>Email</FieldLabel>
       <Input />
-      <FieldError>{undefined}</FieldError>
+      <FieldError>Enter an email.</FieldError>
     </Field>,
   )
-  expect(screen.queryByRole("alert")).toBeNull()
+  expect(screen.queryByText("Enter an email.")).toBeNull()
+  expect(screen.getByRole("textbox", { name: "Email" }).hasAttribute("aria-invalid")).toBe(false)
 
   rerender(
     <Field invalid>

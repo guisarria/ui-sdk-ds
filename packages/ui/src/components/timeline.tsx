@@ -11,11 +11,9 @@ import {
   TimelineTitle as TimelineTitlePrimitive,
 } from "@ui-sdk/react/timeline"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
-function Timeline({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TimelinePrimitive>, "className"> & { className?: string }) {
+function Timeline({ className, ...props }: PrimitiveProps<typeof TimelinePrimitive>) {
   return (
     <TimelinePrimitive
       className={cn(
@@ -27,10 +25,7 @@ function Timeline({
   )
 }
 
-function TimelineItem({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TimelineItemPrimitive>, "className"> & { className?: string }) {
+function TimelineItem({ className, ...props }: PrimitiveProps<typeof TimelineItemPrimitive>) {
   return (
     <TimelineItemPrimitive
       className={cn(
@@ -42,12 +37,7 @@ function TimelineItem({
   )
 }
 
-function TimelineMarker({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TimelineMarkerPrimitive>, "className"> & {
-  className?: string
-}) {
+function TimelineMarker({ className, ...props }: PrimitiveProps<typeof TimelineMarkerPrimitive>) {
   return (
     <TimelineMarkerPrimitive
       className={cn(
@@ -62,9 +52,7 @@ function TimelineMarker({
 function TimelineConnector({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TimelineConnectorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TimelineConnectorPrimitive>) {
   return (
     <TimelineConnectorPrimitive
       className={cn(
@@ -76,12 +64,7 @@ function TimelineConnector({
   )
 }
 
-function TimelineTitle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TimelineTitlePrimitive>, "className"> & {
-  className?: string
-}) {
+function TimelineTitle({ className, ...props }: PrimitiveProps<typeof TimelineTitlePrimitive>) {
   return (
     <TimelineTitlePrimitive
       className={cn(
@@ -93,10 +76,7 @@ function TimelineTitle({
   )
 }
 
-function TimelineTime({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TimelineTimePrimitive>, "className"> & { className?: string }) {
+function TimelineTime({ className, ...props }: PrimitiveProps<typeof TimelineTimePrimitive>) {
   return (
     <TimelineTimePrimitive
       className={cn(
@@ -111,9 +91,7 @@ function TimelineTime({
 function TimelineDescription({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TimelineDescriptionPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TimelineDescriptionPrimitive>) {
   return (
     <TimelineDescriptionPrimitive
       className={cn(

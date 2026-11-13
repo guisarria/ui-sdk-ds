@@ -9,7 +9,7 @@ import {
 import { cn } from "cn"
 import { XIcon } from "lucide-react"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 const tokenClassName =
   "inline-flex items-center gap-0.5 rounded-lg bg-muted px-1.5 align-baseline text-sm font-medium text-foreground data-pending:opacity-60 data-selected:bg-primary data-selected:text-primary-foreground data-unresolved:text-muted-foreground data-unresolved:line-through"
@@ -17,9 +17,7 @@ const tokenClassName =
 function TokenInputEditor({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TokenInputEditorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TokenInputEditorPrimitive>) {
   return (
     <TokenInputEditorPrimitive
       className={cn(
@@ -32,12 +30,7 @@ function TokenInputEditor({
   )
 }
 
-function TokenInputToken({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TokenInputTokenPrimitive>, "className"> & {
-  className?: string
-}) {
+function TokenInputToken({ className, ...props }: PrimitiveProps<typeof TokenInputTokenPrimitive>) {
   return <TokenInputTokenPrimitive className={cn(tokenClassName, className)} {...props} />
 }
 
@@ -45,11 +38,7 @@ function TokenInputTokenRemove({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof TokenInputTokenRemovePrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof TokenInputTokenRemovePrimitive>>) {
   return (
     <TokenInputTokenRemovePrimitive
       aria-label="Remove"

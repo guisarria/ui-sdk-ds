@@ -5,13 +5,9 @@ import { Rating as RatingPrimitive, RatingItem as RatingItemPrimitive } from "@u
 import { cn } from "cn"
 import { StarIcon } from "lucide-react"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
-function Rating({
-  className,
-  children,
-  ...props
-}: Omit<React.ComponentProps<typeof RatingPrimitive>, "className"> & { className?: string }) {
+function Rating({ className, children, ...props }: PrimitiveProps<typeof RatingPrimitive>) {
   return (
     <RatingPrimitive
       className={cn("inline-flex items-center gap-0.5 data-disabled:opacity-50", className)}
@@ -26,9 +22,7 @@ function RatingItem({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof RatingItemPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof RatingItemPrimitive>>) {
   return (
     <RatingItemPrimitive
       className={cn(

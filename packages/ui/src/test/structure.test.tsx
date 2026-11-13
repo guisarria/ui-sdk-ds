@@ -36,6 +36,7 @@ import {
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxTrigger,
 } from "@ui-sdk-ds/ui/components/combobox"
 import {
   Command,
@@ -114,7 +115,7 @@ import {
 } from "@ui-sdk-ds/ui/components/dropdown-menu"
 import { Field, FieldDescription, FieldLabel } from "@ui-sdk-ds/ui/components/field"
 import { HoverCard, HoverCardContent, HoverCardTrigger } from "@ui-sdk-ds/ui/components/hover-card"
-import { Input } from "@ui-sdk-ds/ui/components/input"
+import { Input, InputGroup } from "@ui-sdk-ds/ui/components/input"
 import { Item, ItemContent, ItemTitle } from "@ui-sdk-ds/ui/components/item"
 import { Label } from "@ui-sdk-ds/ui/components/label"
 import {
@@ -365,7 +366,10 @@ const fixtures = {
   ),
   combobox: () => (
     <Combobox items={["Apple", "Pear"]} defaultOpen>
-      <ComboboxInput aria-label="Fruit" />
+      <InputGroup>
+        <ComboboxInput aria-label="Fruit" />
+        <ComboboxTrigger />
+      </InputGroup>
       <ComboboxContent>
         <ComboboxEmpty>None</ComboboxEmpty>
         <ComboboxList>
@@ -380,7 +384,7 @@ const fixtures = {
   ),
   command: () => (
     <Command>
-      <CommandInput placeholder="Search" />
+      <CommandInput aria-label="Search commands" placeholder="Search" />
       <CommandList>
         <CommandEmpty>Nothing</CommandEmpty>
         <CommandGroup heading="Actions">
@@ -413,7 +417,7 @@ const fixtures = {
     </Menubar>
   ),
   carousel: () => (
-    <Carousel>
+    <Carousel aria-label="Featured projects">
       <CarouselContent>
         <CarouselItem>One</CarouselItem>
       </CarouselContent>

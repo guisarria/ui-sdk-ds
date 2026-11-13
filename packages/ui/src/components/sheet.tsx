@@ -14,14 +14,10 @@ import { kbdClassName } from "@ui-sdk-ds/ui/components/kbd"
 
 import { Button } from "@ui-sdk-ds/ui/components/button"
 import { XIcon } from "lucide-react"
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren, RenderProps } from "@ui-sdk-ds/ui/lib/parts"
+import { mergeProps, renderElement } from "@ui-sdk/react/primitive"
 
-function SheetOverlay({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SheetPrimitiveBackdrop>, "className"> & {
-  className?: string
-}) {
+function SheetOverlay({ className, ...props }: PrimitiveProps<typeof SheetPrimitiveBackdrop>) {
   return (
     <SheetPrimitiveBackdrop
       className={cn(
@@ -39,9 +35,7 @@ function SheetContent({
   side = "right",
   showCloseButton = true,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof SheetPrimitiveContent>, "className"> & { className?: string }
-> & {
+}: WithNodeChildren<PrimitiveProps<typeof SheetPrimitiveContent>> & {
   side?: "top" | "right" | "bottom" | "left"
   showCloseButton?: boolean
 }) {
@@ -62,7 +56,7 @@ function SheetContent({
             render={
               <Button
                 variant="ghost"
-                className="absolute top-4 right-4 bg-secondary"
+                className="absolute end-4 top-4 bg-secondary"
                 size="icon-sm"
               />
             }
@@ -76,30 +70,29 @@ function SheetContent({
   )
 }
 
-function SheetHeader({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="sheet-header"
-      className={cn("flex flex-col gap-1.5 p-6", className)}
-      {...props}
-    />
+function SheetHeader({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      { "data-slot": "sheet-header", className: cn("flex flex-col gap-1.5 p-6", className) },
+      props,
+    ),
+    render,
   )
 }
 
-function SheetFooter({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      data-slot="sheet-footer"
-      className={cn("mt-auto flex flex-col gap-2 p-6", className)}
-      {...props}
-    />
+function SheetFooter({ className, render, ...props }: RenderProps<"div">) {
+  return renderElement(
+    "div",
+    mergeProps(
+      { "data-slot": "sheet-footer", className: cn("mt-auto flex flex-col gap-2 p-6", className) },
+      props,
+    ),
+    render,
   )
 }
 
-function SheetTitle({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof SheetPrimitiveTitle>, "className"> & { className?: string }) {
+function SheetTitle({ className, ...props }: PrimitiveProps<typeof SheetPrimitiveTitle>) {
   return (
     <SheetPrimitiveTitle
       className={cn("font-heading text-base font-medium text-foreground", className)}
@@ -111,9 +104,7 @@ function SheetTitle({
 function SheetDescription({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof SheetPrimitiveDescription>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof SheetPrimitiveDescription>) {
   return (
     <SheetPrimitiveDescription
       className={cn("text-sm text-muted-foreground", className)}
@@ -122,12 +113,7 @@ function SheetDescription({
   )
 }
 
-function SheetShortcut({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof DialogShortcutPrimitive>, "className"> & {
-  className?: string
-}) {
+function SheetShortcut({ className, ...props }: PrimitiveProps<typeof DialogShortcutPrimitive>) {
   return <DialogShortcutPrimitive className={cn(kbdClassName, className)} {...props} />
 }
 

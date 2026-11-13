@@ -15,15 +15,15 @@ import { ArrowDownIcon } from "lucide-react"
 
 import { buttonVariants } from "@ui-sdk-ds/ui/components/button"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
 function ScrollArea({
   className,
   children,
+  "aria-label": label,
+  "aria-labelledby": labelledBy,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ScrollAreaPrimitive>, "className"> & { className?: string }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ScrollAreaPrimitive>>) {
   const nodes = React.Children.toArray(children)
   const isScrollBar = (node: React.ReactNode) =>
     React.isValidElement(node) && (node.type === ScrollBar || node.type === ScrollAreaScrollToEnd)
@@ -32,10 +32,13 @@ function ScrollArea({
 
   return (
     <ScrollAreaPrimitive className={cn("relative overflow-hidden", className)} {...props}>
-      <ScrollAreaViewportPrimitive className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1">
-        <ScrollAreaContentPrimitive data-slot="scroll-area-content">
-          {content}
-        </ScrollAreaContentPrimitive>
+      <ScrollAreaViewportPrimitive
+        role={label || labelledBy ? "region" : undefined}
+        aria-label={label}
+        aria-labelledby={labelledBy}
+        className="size-full rounded-[inherit] transition-[color,box-shadow] outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:outline-1"
+      >
+        <ScrollAreaContentPrimitive>{content}</ScrollAreaContentPrimitive>
       </ScrollAreaViewportPrimitive>
       <ScrollBar />
       {scrollBars}
@@ -48,14 +51,12 @@ function ScrollBar({
   className,
   orientation = "vertical",
   ...props
-}: Omit<React.ComponentProps<typeof ScrollAreaScrollbarPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof ScrollAreaScrollbarPrimitive>) {
   return (
     <ScrollAreaScrollbarPrimitive
       orientation={orientation}
       className={cn(
-        "invisible flex touch-none p-px transition-colors select-none data-visible:visible data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:border-t data-[orientation=horizontal]:border-t-transparent data-[orientation=vertical]:w-2.5 data-[orientation=vertical]:flex-col data-[orientation=vertical]:border-l data-[orientation=vertical]:border-l-transparent",
+        "invisible flex touch-none p-px transition-colors select-none data-visible:visible data-[orientation=horizontal]:h-2.5 data-[orientation=horizontal]:border-t data-[orientation=horizontal]:border-t-transparent data-[orientation=vertical]:w-2.5 data-[orientation=vertical]:flex-col data-[orientation=vertical]:border-s data-[orientation=vertical]:border-s-transparent",
         className,
       )}
       {...props}
@@ -69,11 +70,7 @@ function ScrollAreaScrollToEnd({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof ScrollAreaScrollToEndPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof ScrollAreaScrollToEndPrimitive>>) {
   return (
     <ScrollAreaScrollToEndPrimitive
       aria-label="Scroll to end"

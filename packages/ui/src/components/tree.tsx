@@ -10,12 +10,9 @@ import {
 import { cn } from "cn"
 import { CheckIcon, ChevronRightIcon, MinusIcon } from "lucide-react"
 
-import type { WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
+import type { PrimitiveProps, WithNodeChildren } from "@ui-sdk-ds/ui/lib/parts"
 
-function Tree({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TreePrimitive>, "className"> & { className?: string }) {
+function Tree({ className, ...props }: PrimitiveProps<typeof TreePrimitive>) {
   return (
     <TreePrimitive
       className={cn(
@@ -27,12 +24,7 @@ function Tree({
   )
 }
 
-function TreeItemLabel({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TreeItemLabelPrimitive>, "className"> & {
-  className?: string
-}) {
+function TreeItemLabel({ className, ...props }: PrimitiveProps<typeof TreeItemLabelPrimitive>) {
   return (
     <TreeItemLabelPrimitive
       className={cn(
@@ -48,11 +40,7 @@ function TreeItemIndicator({
   className,
   children,
   ...props
-}: WithNodeChildren<
-  Omit<React.ComponentProps<typeof TreeItemIndicatorPrimitive>, "className"> & {
-    className?: string
-  }
->) {
+}: WithNodeChildren<PrimitiveProps<typeof TreeItemIndicatorPrimitive>>) {
   return (
     <TreeItemIndicatorPrimitive
       className={cn(
@@ -69,9 +57,7 @@ function TreeItemIndicator({
 function TreeItemCheckbox({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TreeItemCheckboxPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TreeItemCheckboxPrimitive>) {
   return (
     <TreeItemCheckboxPrimitive
       className={cn(

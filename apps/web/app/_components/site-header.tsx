@@ -76,7 +76,7 @@ export function SiteHeader() {
         <Badge variant="secondary" className="max-sm:hidden">
           base-rhea · {paletteValue}
         </Badge>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="ms-auto flex items-center gap-2">
           <ToggleGroup
             aria-label="Color palette"
             size="sm"

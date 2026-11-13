@@ -6,6 +6,7 @@ import {
   HoverCardArrow as HoverCardArrowPrimitive,
 } from "@ui-sdk/react/hover-card"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 function HoverCardContent({
   className,
@@ -14,9 +15,7 @@ function HoverCardContent({
   align = "center",
   alignOffset = 4,
   ...props
-}: Omit<React.ComponentProps<typeof HoverCardContentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof HoverCardContentPrimitive>) {
   return (
     <HoverCardContentPrimitive
       side={side}
@@ -32,12 +31,7 @@ function HoverCardContent({
   )
 }
 
-function HoverCardArrow({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof HoverCardArrowPrimitive>, "className"> & {
-  className?: string
-}) {
+function HoverCardArrow({ className, ...props }: PrimitiveProps<typeof HoverCardArrowPrimitive>) {
   return (
     <HoverCardArrowPrimitive
       className={cn(

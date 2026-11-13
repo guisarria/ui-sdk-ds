@@ -9,22 +9,17 @@ import {
 } from "@ui-sdk/react/otp-input"
 import { cn } from "cn"
 import { MinusIcon } from "lucide-react"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 function InputOTP({
   className,
   containerClassName,
   ...props
-}: Omit<
-  Omit<React.ComponentProps<typeof OTPInputPrimitive>, "className"> & { className?: string },
-  "className"
-> & {
-  className?: string
-  containerClassName?: string
-}) {
+}: PrimitiveProps<typeof OTPInputPrimitive> & { containerClassName?: string }) {
   return (
     <OTPInputPrimitive
       className={cn(
-        "flex items-center data-disabled:cursor-not-allowed data-disabled:opacity-50",
+        "group/otp flex items-center data-disabled:cursor-not-allowed data-disabled:opacity-50",
         containerClassName,
         className,
       )}
@@ -33,16 +28,11 @@ function InputOTP({
   )
 }
 
-function InputOTPGroup({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof OTPInputGroupPrimitive>, "className"> & {
-  className?: string
-}) {
+function InputOTPGroup({ className, ...props }: PrimitiveProps<typeof OTPInputGroupPrimitive>) {
   return (
     <OTPInputGroupPrimitive
       className={cn(
-        "flex items-center rounded-2xl has-aria-invalid:border-destructive has-aria-invalid:ring-3 has-aria-invalid:ring-destructive/20 dark:has-aria-invalid:ring-destructive/40",
+        "flex items-center rounded-2xl group-has-aria-invalid/otp:ring-3 group-has-aria-invalid/otp:ring-destructive/20 dark:group-has-aria-invalid/otp:ring-destructive/40",
         className,
       )}
       {...props}
@@ -53,14 +43,11 @@ function InputOTPGroup({
 function InputOTPSlot({
   className,
   ...props
-}: Omit<
-  Omit<React.ComponentProps<typeof OTPInputSlotPrimitive>, "className"> & { className?: string },
-  "children"
->) {
+}: Omit<PrimitiveProps<typeof OTPInputSlotPrimitive>, "children">) {
   return (
     <OTPInputSlotPrimitive
       className={cn(
-        "relative flex size-8 items-center justify-center border-y border-r border-input bg-input/50 text-sm transition-[color,box-shadow] duration-200 outline-none first:rounded-l-2xl first:border-l last:rounded-r-2xl aria-invalid:border-destructive data-active:z-10 data-active:border-ring data-active:ring-3 data-active:ring-ring/30 data-active:aria-invalid:ring-destructive/20 dark:data-active:aria-invalid:ring-destructive/40",
+        "relative flex size-8 items-center justify-center border-y border-e border-input bg-input/50 text-sm transition-[color,box-shadow] duration-200 outline-none group-has-aria-invalid/otp:border-destructive first:rounded-s-2xl first:border-s last:rounded-e-2xl data-active:z-10 data-active:border-ring data-active:ring-3 data-active:ring-ring/30 group-has-aria-invalid/otp:data-active:ring-destructive/20 dark:group-has-aria-invalid/otp:data-active:ring-destructive/40",
         className,
       )}
       {...props}
@@ -82,9 +69,7 @@ function InputOTPSlot({
 function InputOTPSeparator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof OTPInputSeparatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof OTPInputSeparatorPrimitive>) {
   return (
     <OTPInputSeparatorPrimitive
       className={cn("flex items-center [&_svg:not([class*='size-'])]:size-4", className)}

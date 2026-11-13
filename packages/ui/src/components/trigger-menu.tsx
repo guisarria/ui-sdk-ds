@@ -16,13 +16,12 @@ import {
 } from "@ui-sdk/react/trigger-menu"
 import { useFieldControl } from "@ui-sdk/react/field"
 import { cn } from "cn"
+import type { PrimitiveProps } from "@ui-sdk-ds/ui/lib/parts"
 
 function TriggerMenuInput({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuInputPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuInputPrimitive>) {
   const field = useFieldControl()
   const input = {
     name: field?.name,
@@ -40,9 +39,7 @@ function TriggerMenuContent({
   sideOffset = 6,
   align = "start",
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuContentPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuContentPrimitive>) {
   return (
     <TriggerMenuContentPrimitive
       sideOffset={sideOffset}
@@ -56,12 +53,7 @@ function TriggerMenuContent({
   )
 }
 
-function TriggerMenuList({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuListPrimitive>, "className"> & {
-  className?: string
-}) {
+function TriggerMenuList({ className, ...props }: PrimitiveProps<typeof TriggerMenuListPrimitive>) {
   return (
     <TriggerMenuListPrimitive
       className={cn(
@@ -73,12 +65,7 @@ function TriggerMenuList({
   )
 }
 
-function TriggerMenuItem({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuItemPrimitive>, "className"> & {
-  className?: string
-}) {
+function TriggerMenuItem({ className, ...props }: PrimitiveProps<typeof TriggerMenuItemPrimitive>) {
   return (
     <TriggerMenuItemPrimitive
       className={cn(
@@ -93,9 +80,7 @@ function TriggerMenuItem({
 function TriggerMenuItemIcon({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuItemIconPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuItemIconPrimitive>) {
   return (
     <TriggerMenuItemIconPrimitive
       className={cn("flex size-4 shrink-0 text-muted-foreground", className)}
@@ -107,18 +92,14 @@ function TriggerMenuItemIcon({
 function TriggerMenuGroup({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuGroupPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuGroupPrimitive>) {
   return <TriggerMenuGroupPrimitive className={cn(className)} {...props} />
 }
 
 function TriggerMenuGroupLabel({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuGroupLabelPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuGroupLabelPrimitive>) {
   return (
     <TriggerMenuGroupLabelPrimitive
       className={cn("px-2 py-1.5 text-xs text-muted-foreground", className)}
@@ -130,9 +111,7 @@ function TriggerMenuGroupLabel({
 function TriggerMenuEmpty({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuEmptyPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuEmptyPrimitive>) {
   return (
     <TriggerMenuEmptyPrimitive
       className={cn(
@@ -147,9 +126,7 @@ function TriggerMenuEmpty({
 function TriggerMenuStatus({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuStatusPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuStatusPrimitive>) {
   return (
     <TriggerMenuStatusPrimitive
       className={cn("px-2 py-1.5 text-sm text-muted-foreground empty:hidden", className)}
@@ -158,12 +135,7 @@ function TriggerMenuStatus({
   )
 }
 
-function TriggerMenuHint({
-  className,
-  ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuHintPrimitive>, "className"> & {
-  className?: string
-}) {
+function TriggerMenuHint({ className, ...props }: PrimitiveProps<typeof TriggerMenuHintPrimitive>) {
   return (
     <TriggerMenuHintPrimitive
       className={cn("pointer-events-none text-muted-foreground/70", className)}
@@ -175,9 +147,7 @@ function TriggerMenuHint({
 function TriggerMenuSeparator({
   className,
   ...props
-}: Omit<React.ComponentProps<typeof TriggerMenuSeparatorPrimitive>, "className"> & {
-  className?: string
-}) {
+}: PrimitiveProps<typeof TriggerMenuSeparatorPrimitive>) {
   return (
     <TriggerMenuSeparatorPrimitive
       className={cn("-mx-1 my-1 h-px bg-border", className)}
