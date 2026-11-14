@@ -612,7 +612,9 @@ function ReviewerSearch() {
           </ComboboxList>
         </ComboboxContent>
       </Combobox>
-      <FieldDescription>Search runs on the server, so the list doesn’t filter itself.</FieldDescription>
+      <FieldDescription>
+        Search runs on the server, so the list doesn’t filter itself.
+      </FieldDescription>
     </Field>
   )
 }

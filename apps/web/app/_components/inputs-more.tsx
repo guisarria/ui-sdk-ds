@@ -134,12 +134,12 @@ function NumberAndPasswordBlock() {
             <FieldLabel>Username</FieldLabel>
             <Input autoComplete="new-password" />
             <FieldDescription>At least 12 characters.</FieldDescription>
-            </Field>
+          </Field>
 
-        <Field name="new-password">
-          <FieldLabel>New password</FieldLabel>
-          <PasswordInput autoComplete="new-password" />
-          <FieldDescription>At least 12 characters.</FieldDescription>
+          <Field name="new-password">
+            <FieldLabel>New password</FieldLabel>
+            <PasswordInput autoComplete="new-password" />
+            <FieldDescription>At least 12 characters.</FieldDescription>
           </Field>
         </form>
       </Example>

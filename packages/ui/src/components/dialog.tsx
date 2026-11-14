@@ -39,7 +39,9 @@ function DialogContent<Payload = unknown>({
 }) {
   const closeButton = showCloseButton ? (
     <DialogPrimitiveClose
-      render={<Button variant="ghost" className="absolute inset-e-4 top-4 bg-secondary" size="icon-sm" />}
+      render={
+        <Button variant="ghost" className="absolute inset-e-4 top-4 bg-secondary" size="icon-sm" />
+      }
     >
       <XIcon />
       <span className="sr-only">Close</span>
