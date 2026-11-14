@@ -11,3 +11,17 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - "@ui-sdk/core@0.1.0-beta.2"
   - "@ui-sdk/react@0.1.0-beta.2"
+  - '@next/env@16.5.0-canary.50'
+  - '@next/swc-darwin-arm64@16.5.0-canary.50'
+  - '@next/swc-darwin-x64@16.5.0-canary.50'
+  - '@next/swc-linux-arm64-gnu@16.5.0-canary.50'
+  - '@next/swc-linux-arm64-musl@16.5.0-canary.50'
+  - '@next/swc-linux-x64-gnu@16.5.0-canary.50'
+  - '@next/swc-linux-x64-musl@16.5.0-canary.50'
+  - '@next/swc-win32-arm64-msvc@16.5.0-canary.50'
+  - '@next/swc-win32-x64-msvc@16.5.0-canary.50'
+  - next@16.5.0-canary.50
+
+overrides:
+  "@types/react": 19.3.0
+  "@types/react-dom": 19.3.0

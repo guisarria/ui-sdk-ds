@@ -11,6 +11,8 @@ const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
+  preload: false,
+  style: ["normal"],
 })
 
 export default function RootLayout({

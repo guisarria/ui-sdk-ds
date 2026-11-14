@@ -10,7 +10,7 @@ import {
   AutocompleteList,
   AutocompleteTrigger,
 } from "@ui-sdk-ds/ui/components/autocomplete"
-import { InputGroup } from "@ui-sdk-ds/ui/components/input"
+import { Input, InputGroup } from "@ui-sdk-ds/ui/components/input"
 import { Checkbox, CheckboxGroup } from "@ui-sdk-ds/ui/components/checkbox"
 import {
   ColorPicker,
@@ -129,11 +129,19 @@ function NumberAndPasswordBlock() {
         </Field>
       </Example>
       <Example title="Password · with a visibility toggle" className="block">
+        <form>
+          <Field name="username" className="sr-only">
+            <FieldLabel>Username</FieldLabel>
+            <Input autoComplete="new-password" />
+            <FieldDescription>At least 12 characters.</FieldDescription>
+            </Field>
+
         <Field name="new-password">
           <FieldLabel>New password</FieldLabel>
           <PasswordInput autoComplete="new-password" />
           <FieldDescription>At least 12 characters.</FieldDescription>
-        </Field>
+          </Field>
+        </form>
       </Example>
     </Block>
   )
