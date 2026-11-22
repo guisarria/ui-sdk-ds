@@ -133,8 +133,7 @@ function NumberAndPasswordBlock() {
           <div className="sr-only">
             <Field name="username">
               <FieldLabel>Username</FieldLabel>
-              <Input autoComplete="new-password" />
-              <FieldDescription>At least 12 characters.</FieldDescription>
+              <Input autoComplete="username" />
             </Field>
           </div>
 
