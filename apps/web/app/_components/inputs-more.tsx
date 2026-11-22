@@ -130,11 +130,13 @@ function NumberAndPasswordBlock() {
       </Example>
       <Example title="Password · with a visibility toggle" className="block">
         <form>
-          <Field name="username" className="sr-only">
-            <FieldLabel>Username</FieldLabel>
-            <Input autoComplete="new-password" />
-            <FieldDescription>At least 12 characters.</FieldDescription>
-          </Field>
+          <div className="sr-only">
+            <Field name="username">
+              <FieldLabel>Username</FieldLabel>
+              <Input autoComplete="new-password" />
+              <FieldDescription>At least 12 characters.</FieldDescription>
+            </Field>
+          </div>
 
           <Field name="new-password">
             <FieldLabel>New password</FieldLabel>
